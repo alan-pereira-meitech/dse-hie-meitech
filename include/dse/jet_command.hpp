@@ -1,7 +1,7 @@
 #pragma once
 
 #include <cstdint>
-#include <string>
+#include <string_view>
 
 namespace dse {
 
@@ -14,7 +14,7 @@ enum class DataType {
 
 struct JetCommand {
     DataType type;
-    std::string path;
+    std::string_view path;
 };
 
 }  // namespace dse

@@ -5,6 +5,7 @@
 #include <sstream>
 #include <stdexcept>
 #include <string>
+#include <string_view>
 #include <utility>
 #include <vector>
 
@@ -98,7 +99,7 @@ std::string errno_string(int err) {
 #endif
 }
 
-std::string build_request(const std::string& method, const std::string& host, const std::string& path,
+std::string build_request(const std::string& method, const std::string& host, std::string_view path,
                           const std::string& body) {
     std::ostringstream request;
     request << method << " /jet/vars/" << path << " HTTP/1.1\r\n";
