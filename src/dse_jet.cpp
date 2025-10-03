@@ -169,7 +169,7 @@ void DSEJet::restore_factory_defaults() {
 }
 
 const JetCommand& DSEJet::filter_mode_command(FilterStage stage) {
-    static constexpr std::array<JetCommand, 4> kCommands = {
+    static const std::array<JetCommand, 4> kCommands = {
         JetCommands::DSEFilterModeStage2,
         JetCommands::DSEFilterModeStage3,
         JetCommands::DSEFilterModeStage4,
@@ -179,7 +179,7 @@ const JetCommand& DSEJet::filter_mode_command(FilterStage stage) {
 }
 
 const JetCommand& DSEJet::comb_frequency_command(FilterStage stage) {
-    static constexpr std::array<JetCommand, 4> kCommands = {
+    static const std::array<JetCommand, 4> kCommands = {
         JetCommands::DSECombFilterFrequencyStage2,
         JetCommands::DSECombFilterFrequencyStage3,
         JetCommands::DSECombFilterFrequencyStage4,
@@ -189,7 +189,7 @@ const JetCommand& DSEJet::comb_frequency_command(FilterStage stage) {
 }
 
 const JetCommand& DSEJet::moving_average_frequency_command(FilterStage stage) {
-    static constexpr std::array<JetCommand, 4> kCommands = {
+    static const std::array<JetCommand, 4> kCommands = {
         JetCommands::DSEMovAvFilterFrequencyStage2,
         JetCommands::DSEMovAvFilterFrequencyStage3,
         JetCommands::DSEMovAvFilterFrequencyStage4,
