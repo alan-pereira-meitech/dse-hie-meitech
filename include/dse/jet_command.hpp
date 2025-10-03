@@ -13,8 +13,12 @@ enum class DataType {
 };
 
 struct JetCommand {
-    DataType type;
-    std::string_view path;
+    DataType type{};
+    std::string_view path{};
+
+    constexpr JetCommand() = default;
+    constexpr JetCommand(DataType command_type, std::string_view command_path) noexcept
+        : type(command_type), path(command_path) {}
 };
 
 }  // namespace dse
