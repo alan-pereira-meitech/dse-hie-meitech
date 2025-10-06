@@ -6,7 +6,7 @@
 Connect your own application to weighing terminals WTX110 and WTX120 or digital sensor electronic DSE from HBM.
 
 
-Contains API and 3 templates (Console application, Simple GUI, PLC view). 
+This repository now ships only the core Automation API library focused on DSE Jet communication so it can be referenced from your own applications.
 
 
 Documentation can be found on the [product page](https://www.hbm.com/wtx/).
