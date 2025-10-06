@@ -6,7 +6,7 @@
 Connect your own application to weighing terminals WTX110 and WTX120 or digital sensor electronic DSE from HBM.
 
 
-This repository now provides a fully managed C++/CLI implementation of the Automation API focused on the DSE Jet workflow. It ships with the core library (`Hbm.Automation.Api`) and a console template that demonstrates the JetBus handshake, process data streaming, and interactive tare/zero commands.
+Contains API and 3 templates (Console application, Simple GUI, PLC view). 
 
 
 Documentation can be found on the [product page](https://www.hbm.com/wtx/).
