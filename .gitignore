@@ -1,16 +1,6 @@
-#*.suo
-#*.ide
+# Build artifacts
+build/
 
-bin/
-obj/
-packages/
-TestResults/
-.axoCover/
-.vs/
-
-/Examples/NETStandard2TestLib
-Doc/log.log
-Automation-API-Doc/debug.log
-Automation-API-Doc/Help/
-Examples/CommandLine/StyleCop.Cache
-StyleCop.Cache
+# Common temporary files
+*.suo
+*.ide

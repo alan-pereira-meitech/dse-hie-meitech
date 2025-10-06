@@ -1,20 +1,19 @@
-# Automation-API
+# DSE Jet C++ Library
 
+This repository contains a standalone C++ client library for interacting with
+HBM DSE Jet devices over JetBus.  The code is organized as a modern CMake
+project located in the `cpp/` directory and exposes a small, focused API for
+connecting, subscribing to variables, reading cached values, and writing new
+values.
 
-[![Build status](https://hbmdevelopment.visualstudio.com/HBM%20Weighing/_apis/build/status/HBM%20Weighing%20API%20CI)](https://hbmdevelopment.visualstudio.com/HBM%20Weighing/_build/latest?definitionId=47)
+## Building
 
-Connect your own application to weighing terminals WTX110 and WTX120 or digital sensor electronic DSE from HBM.
-
-
-Contains API and 3 templates (Console application, Simple GUI, PLC view). 
-
-
-Documentation can be found on the [product page](https://www.hbm.com/wtx/).
-
+```bash
+cmake -S cpp -B build
+cmake --build build
+```
 
 ## License
 
-
-
-Copyright (c) 2019 HBM. See the [LICENSE](LICENSE) file for license rights and
-limitations (MIT).
+This project remains licensed under the MIT License.  See the
+[LICENSE](LICENSE) file for the full text.
