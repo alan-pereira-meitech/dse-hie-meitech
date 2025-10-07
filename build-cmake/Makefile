@@ -198,17 +198,17 @@ dse_device/fast:
 .PHONY : dse_device/fast
 
 #=============================================================================
-# Target rules for targets named dse_console_example
+# Target rules for targets named dse_stream_1s
 
 # Build rule for target.
-dse_console_example: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 dse_console_example
-.PHONY : dse_console_example
+dse_stream_1s: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 dse_stream_1s
+.PHONY : dse_stream_1s
 
 # fast build rule for target.
-dse_console_example/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/dse_console_example.dir/build.make CMakeFiles/dse_console_example.dir/build
-.PHONY : dse_console_example/fast
+dse_stream_1s/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/dse_stream_1s.dir/build.make CMakeFiles/dse_stream_1s.dir/build
+.PHONY : dse_stream_1s/fast
 
 #=============================================================================
 # Target rules for targets named jetbus_tests
@@ -249,29 +249,29 @@ Catch2WithMain/fast:
 	$(MAKE) $(MAKESILENT) -f _deps/catch2-build/src/CMakeFiles/Catch2WithMain.dir/build.make _deps/catch2-build/src/CMakeFiles/Catch2WithMain.dir/build
 .PHONY : Catch2WithMain/fast
 
-examples/dse_console_example.o: examples/dse_console_example.cpp.o
-.PHONY : examples/dse_console_example.o
+examples/stream_every_second.o: examples/stream_every_second.cpp.o
+.PHONY : examples/stream_every_second.o
 
 # target to build an object file
-examples/dse_console_example.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/dse_console_example.dir/build.make CMakeFiles/dse_console_example.dir/examples/dse_console_example.cpp.o
-.PHONY : examples/dse_console_example.cpp.o
+examples/stream_every_second.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/dse_stream_1s.dir/build.make CMakeFiles/dse_stream_1s.dir/examples/stream_every_second.cpp.o
+.PHONY : examples/stream_every_second.cpp.o
 
-examples/dse_console_example.i: examples/dse_console_example.cpp.i
-.PHONY : examples/dse_console_example.i
+examples/stream_every_second.i: examples/stream_every_second.cpp.i
+.PHONY : examples/stream_every_second.i
 
 # target to preprocess a source file
-examples/dse_console_example.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/dse_console_example.dir/build.make CMakeFiles/dse_console_example.dir/examples/dse_console_example.cpp.i
-.PHONY : examples/dse_console_example.cpp.i
+examples/stream_every_second.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/dse_stream_1s.dir/build.make CMakeFiles/dse_stream_1s.dir/examples/stream_every_second.cpp.i
+.PHONY : examples/stream_every_second.cpp.i
 
-examples/dse_console_example.s: examples/dse_console_example.cpp.s
-.PHONY : examples/dse_console_example.s
+examples/stream_every_second.s: examples/stream_every_second.cpp.s
+.PHONY : examples/stream_every_second.s
 
 # target to generate assembly for a file
-examples/dse_console_example.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/dse_console_example.dir/build.make CMakeFiles/dse_console_example.dir/examples/dse_console_example.cpp.s
-.PHONY : examples/dse_console_example.cpp.s
+examples/stream_every_second.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/dse_stream_1s.dir/build.make CMakeFiles/dse_stream_1s.dir/examples/stream_every_second.cpp.s
+.PHONY : examples/stream_every_second.cpp.s
 
 src/dse/device.o: src/dse/device.cpp.o
 .PHONY : src/dse/device.o
@@ -432,13 +432,13 @@ help:
 	@echo "... test"
 	@echo "... Catch2"
 	@echo "... Catch2WithMain"
-	@echo "... dse_console_example"
 	@echo "... dse_device"
+	@echo "... dse_stream_1s"
 	@echo "... jetbus_core"
 	@echo "... jetbus_tests"
-	@echo "... examples/dse_console_example.o"
-	@echo "... examples/dse_console_example.i"
-	@echo "... examples/dse_console_example.s"
+	@echo "... examples/stream_every_second.o"
+	@echo "... examples/stream_every_second.i"
+	@echo "... examples/stream_every_second.s"
 	@echo "... src/dse/device.o"
 	@echo "... src/dse/device.i"
 	@echo "... src/dse/device.s"

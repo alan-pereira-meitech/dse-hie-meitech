@@ -125,7 +125,7 @@ void JetBusClient::disconnect() {
 }
 
 std::string JetBusClient::fetch(const std::string& path) {
-    printf("[DEBUG] Entering fetch for path: %s\n", path.c_str());
+    if (options_.enable_debug_logs) printf("[DEBUG] Entering fetch for path: %s\n", path.c_str());
     const int id = next_id_.fetch_add(1);
     const std::string token = std::to_string(id);
     {
@@ -144,18 +144,18 @@ std::string JetBusClient::fetch(const std::string& path) {
         std::lock_guard lock(pending_mutex_);
         pending_promises_[id] = message.promise;
     }
-    printf("[DEBUG] About to call get_future() in fetch()\n");
+    if (options_.enable_debug_logs) printf("[DEBUG] About to call get_future() in fetch()\n");
     auto future = message.promise->get_future();
-    printf("[DEBUG] Future obtained, enqueueing message...\n");
+    if (options_.enable_debug_logs) printf("[DEBUG] Future obtained, enqueueing message...\n");
     enqueue(std::move(message));
-    printf("[DEBUG] get_future() called, waiting for response...\n");
+    if (options_.enable_debug_logs) printf("[DEBUG] get_future() called, waiting for response...\n");
     if (future.wait_for(options_.request_timeout) == std::future_status::timeout) {
         {
             std::lock_guard lock(pending_mutex_);
             pending_tokens_.erase(id);
             pending_promises_.erase(id);
         }
-        printf("[ERROR] Fetch request timed out for path: %s\n", path.c_str());
+    printf("[ERROR] Fetch request timed out for path: %s\n", path.c_str());
         throw JetBusError("Fetch request timed out for path: " + path);
     }
     auto response = future.get();
@@ -166,7 +166,7 @@ std::string JetBusClient::fetch(const std::string& path) {
         printf("[ERROR] Fetch request failed for path: %s\n", path.c_str());
         throw JetBusError("Fetch request failed for path: " + path);
     }
-    printf("[DEBUG] Fetch for path %s succeeded, token: %s\n", path.c_str(), token.c_str());
+    if (options_.enable_debug_logs) printf("[DEBUG] Fetch for path %s succeeded, token: %s\n", path.c_str(), token.c_str());
     return token;
 }
 
@@ -329,7 +329,7 @@ void JetBusClient::run() {
         boost::system::error_code ec;
 
         tcp::resolver resolver{ioc};
-        printf("[DEBUG] Resolving %s:%s...\n", url.host.c_str(), url.port.c_str());
+        if (options_.enable_debug_logs) printf("[DEBUG] Resolving %s:%s...\n", url.host.c_str(), url.port.c_str());
         auto const results = resolver.resolve(url.host, url.port, ec);
         if (ec) {
             printf("[ERROR] resolve failed: %s\n", ec.message().c_str());
@@ -338,7 +338,7 @@ void JetBusClient::run() {
             continue;
         }
 
-        printf("[DEBUG] Connecting TCP...\n");
+        if (options_.enable_debug_logs) printf("[DEBUG] Connecting TCP...\n");
         boost::asio::connect(ws.next_layer().socket(), results.begin(), results.end(), ec);
         if (ec) {
             printf("[ERROR] connect failed: %s\n", ec.message().c_str());
@@ -350,7 +350,7 @@ void JetBusClient::run() {
     // Host para handshake; mantenha como estava (host puro para 80/443, host:port caso contrário)
     std::string host_header = (url.port == "80" || url.port == "443") ? url.host : (url.host + ":" + url.port);
         std::string target = url.target;
-        printf("[DEBUG] Performing websocket handshake to %s%s...\n", host_header.c_str(), target.c_str());
+        if (options_.enable_debug_logs) printf("[DEBUG] Performing websocket handshake to %s%s...\n", host_header.c_str(), target.c_str());
         ws.set_option(boost::beast::websocket::stream_base::decorator(
             [&](boost::beast::websocket::request_type& req) {
                 namespace http = boost::beast::http;
@@ -370,7 +370,7 @@ void JetBusClient::run() {
                 req.set(http::field::sec_websocket_protocol, "jet");
 
                 // Log do request
-                {
+                if (options_.enable_debug_logs) {
                     std::stringstream ss; ss << req;
                     printf("[DEBUG] Outgoing WS handshake request:\n%s\n", ss.str().c_str());
                 }
@@ -380,9 +380,9 @@ void JetBusClient::run() {
         // handshake (sem tentar barra final imediatamente)
         ws.handshake(host_header, target, ec);
         if (!ec) {
-            printf("[DEBUG] Handshake successful (response not directly accessible via ws.response()).\n");
+            if (options_.enable_debug_logs) printf("[DEBUG] Handshake successful (response not directly accessible via ws.response()).\n");
         } else {
-            printf("[DEBUG] Handshake error immediately after call: %s\n", ec.message().c_str());
+            if (options_.enable_debug_logs) printf("[DEBUG] Handshake error immediately after call: %s\n", ec.message().c_str());
         }
         // não retentar automaticamente com barra final aqui
         if (ec) {
@@ -392,7 +392,7 @@ void JetBusClient::run() {
             continue;
         }
 
-        printf("[DEBUG] Handshake successful. Entering I/O loop.\n");
+    if (options_.enable_debug_logs) printf("[DEBUG] Handshake successful. Entering I/O loop.\n");
         delay = options_.reconnect_initial_delay;
 
         while (running_.load()) {
@@ -412,7 +412,7 @@ void JetBusClient::run() {
             }
 
             if (!message.payload.empty()) {
-                printf("[DEBUG] Writing payload: %s\n", message.payload.c_str());
+                if (options_.enable_debug_logs) printf("[DEBUG] Writing payload: %s\n", message.payload.c_str());
                 ws.write(boost::asio::buffer(message.payload), ec);
                 if (ec) {
                     printf("[ERROR] write failed: %s\n", ec.message().c_str());
@@ -424,14 +424,14 @@ void JetBusClient::run() {
             buffer.consume(buffer.size());
             ws.read(buffer, ec);
             if (ec == boost::asio::error::operation_aborted || ec == boost::asio::error::timed_out) {
-                printf("[DEBUG] read timeout or aborted, continuing...\n");
+                if (options_.enable_debug_logs) printf("[DEBUG] read timeout or aborted, continuing...\n");
                 ec.clear();
             } else if (ec) {
                 printf("[ERROR] read failed: %s\n", ec.message().c_str());
                 break;
             } else {
                 auto data = boost::beast::buffers_to_string(buffer.data());
-                printf("[DEBUG] Received message: %s\n", data.c_str());
+                if (options_.enable_debug_logs) printf("[DEBUG] Received message: %s\n", data.c_str());
                 handle_message(data);
             }
         }

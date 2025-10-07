@@ -16,7 +16,7 @@ set(CMAKE_IMPORT_FILE_VERSION 1)
 set(_targetsDefined)
 set(_targetsNotDefined)
 set(_expectedTargets)
-foreach(_expectedTarget dse::jetbus_core dse::dse_device dse::dse_console_example)
+foreach(_expectedTarget dse::jetbus_core dse::dse_device dse::dse_stream_1s)
   list(APPEND _expectedTargets ${_expectedTarget})
   if(NOT TARGET ${_expectedTarget})
     list(APPEND _targetsNotDefined ${_expectedTarget})
@@ -66,8 +66,8 @@ set_target_properties(dse::dse_device PROPERTIES
   INTERFACE_LINK_LIBRARIES "dse::jetbus_core"
 )
 
-# Create imported target dse::dse_console_example
-add_executable(dse::dse_console_example IMPORTED)
+# Create imported target dse::dse_stream_1s
+add_executable(dse::dse_stream_1s IMPORTED)
 
 if(CMAKE_VERSION VERSION_LESS 2.8.12)
   message(FATAL_ERROR "This file relies on consumers using CMake 2.8.12 or greater.")

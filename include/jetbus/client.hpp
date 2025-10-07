@@ -30,6 +30,7 @@ public:
         std::chrono::milliseconds reconnect_initial_delay{std::chrono::milliseconds{500}};
         std::chrono::milliseconds reconnect_max_delay{std::chrono::seconds{30}};
         std::chrono::milliseconds request_timeout{std::chrono::seconds{5}};
+        bool enable_debug_logs{true};
     };
 
     using DataCallback = std::function<void(const std::string& path, const std::string& value, JetEventType event)>;

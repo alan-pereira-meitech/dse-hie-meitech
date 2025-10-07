@@ -88,16 +88,18 @@ target_include_directories(dse_device
 )
 target_include_directories(dse_device PRIVATE ${NLOHMANN_JSON_INCLUDE_DIR})
 
-add_executable(dse_console_example
-    examples/dse_console_example.cpp
+
+
+add_executable(dse_stream_1s
+    examples/stream_every_second.cpp
 )
 
-target_link_libraries(dse_console_example
+target_link_libraries(dse_stream_1s
     PRIVATE
         dse_device
 )
 
-install(TARGETS jetbus_core dse_device dse_console_example
+install(TARGETS jetbus_core dse_device dse_stream_1s
     EXPORT dse_jetbusTargets
     ARCHIVE DESTINATION lib
     LIBRARY DESTINATION lib

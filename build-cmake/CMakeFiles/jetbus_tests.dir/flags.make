@@ -6,5 +6,5 @@ CXX_DEFINES =
 
 CXX_INCLUDES = -I/home/alan/git/dse-hie-meitech/include -I/home/alan/git/dse-hie-meitech/usr/include -I/home/alan/git/dse-hie-meitech/build-cmake/_deps/catch2-src/src/catch2/.. -I/home/alan/git/dse-hie-meitech/build-cmake/_deps/catch2-build/generated-includes
 
-CXX_FLAGS = -O2 -g -DNDEBUG -std=c++17
+CXX_FLAGS = -O3 -DNDEBUG -std=c++17
 

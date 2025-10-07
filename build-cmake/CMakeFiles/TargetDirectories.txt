@@ -1,6 +1,6 @@
 /home/alan/git/dse-hie-meitech/build-cmake/CMakeFiles/jetbus_core.dir
 /home/alan/git/dse-hie-meitech/build-cmake/CMakeFiles/dse_device.dir
-/home/alan/git/dse-hie-meitech/build-cmake/CMakeFiles/dse_console_example.dir
+/home/alan/git/dse-hie-meitech/build-cmake/CMakeFiles/dse_stream_1s.dir
 /home/alan/git/dse-hie-meitech/build-cmake/CMakeFiles/jetbus_tests.dir
 /home/alan/git/dse-hie-meitech/build-cmake/CMakeFiles/test.dir
 /home/alan/git/dse-hie-meitech/build-cmake/CMakeFiles/edit_cache.dir

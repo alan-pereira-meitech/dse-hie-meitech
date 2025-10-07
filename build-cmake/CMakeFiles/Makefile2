@@ -65,7 +65,7 @@ CMAKE_BINARY_DIR = /home/alan/git/dse-hie-meitech/build-cmake
 # The main recursive "all" target.
 all: CMakeFiles/jetbus_core.dir/all
 all: CMakeFiles/dse_device.dir/all
-all: CMakeFiles/dse_console_example.dir/all
+all: CMakeFiles/dse_stream_1s.dir/all
 all: CMakeFiles/jetbus_tests.dir/all
 all: _deps/catch2-build/all
 .PHONY : all
@@ -77,7 +77,7 @@ preinstall: _deps/catch2-build/preinstall
 # The main recursive "clean" target.
 clean: CMakeFiles/jetbus_core.dir/clean
 clean: CMakeFiles/dse_device.dir/clean
-clean: CMakeFiles/dse_console_example.dir/clean
+clean: CMakeFiles/dse_stream_1s.dir/clean
 clean: CMakeFiles/jetbus_tests.dir/clean
 clean: _deps/catch2-build/clean
 .PHONY : clean
@@ -147,7 +147,7 @@ CMakeFiles/jetbus_core.dir/clean:
 CMakeFiles/dse_device.dir/all: CMakeFiles/jetbus_core.dir/all
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/dse_device.dir/build.make CMakeFiles/dse_device.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/dse_device.dir/build.make CMakeFiles/dse_device.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/alan/git/dse-hie-meitech/build-cmake/CMakeFiles --progress-num=93,94 "Built target dse_device"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/alan/git/dse-hie-meitech/build-cmake/CMakeFiles --progress-num=91,92 "Built target dse_device"
 .PHONY : CMakeFiles/dse_device.dir/all
 
 # Build rule for subdir invocation for target.
@@ -167,39 +167,39 @@ CMakeFiles/dse_device.dir/clean:
 .PHONY : CMakeFiles/dse_device.dir/clean
 
 #=============================================================================
-# Target rules for target CMakeFiles/dse_console_example.dir
+# Target rules for target CMakeFiles/dse_stream_1s.dir
 
 # All Build rule for target.
-CMakeFiles/dse_console_example.dir/all: CMakeFiles/dse_device.dir/all
-CMakeFiles/dse_console_example.dir/all: CMakeFiles/jetbus_core.dir/all
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/dse_console_example.dir/build.make CMakeFiles/dse_console_example.dir/depend
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/dse_console_example.dir/build.make CMakeFiles/dse_console_example.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/alan/git/dse-hie-meitech/build-cmake/CMakeFiles --progress-num=91,92 "Built target dse_console_example"
-.PHONY : CMakeFiles/dse_console_example.dir/all
+CMakeFiles/dse_stream_1s.dir/all: CMakeFiles/dse_device.dir/all
+CMakeFiles/dse_stream_1s.dir/all: CMakeFiles/jetbus_core.dir/all
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/dse_stream_1s.dir/build.make CMakeFiles/dse_stream_1s.dir/depend
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/dse_stream_1s.dir/build.make CMakeFiles/dse_stream_1s.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/alan/git/dse-hie-meitech/build-cmake/CMakeFiles --progress-num=93,94 "Built target dse_stream_1s"
+.PHONY : CMakeFiles/dse_stream_1s.dir/all
 
 # Build rule for subdir invocation for target.
-CMakeFiles/dse_console_example.dir/rule: cmake_check_build_system
+CMakeFiles/dse_stream_1s.dir/rule: cmake_check_build_system
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/alan/git/dse-hie-meitech/build-cmake/CMakeFiles 7
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/dse_console_example.dir/all
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/dse_stream_1s.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/alan/git/dse-hie-meitech/build-cmake/CMakeFiles 0
-.PHONY : CMakeFiles/dse_console_example.dir/rule
+.PHONY : CMakeFiles/dse_stream_1s.dir/rule
 
 # Convenience name for target.
-dse_console_example: CMakeFiles/dse_console_example.dir/rule
-.PHONY : dse_console_example
+dse_stream_1s: CMakeFiles/dse_stream_1s.dir/rule
+.PHONY : dse_stream_1s
 
 # clean rule for target.
-CMakeFiles/dse_console_example.dir/clean:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/dse_console_example.dir/build.make CMakeFiles/dse_console_example.dir/clean
-.PHONY : CMakeFiles/dse_console_example.dir/clean
+CMakeFiles/dse_stream_1s.dir/clean:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/dse_stream_1s.dir/build.make CMakeFiles/dse_stream_1s.dir/clean
+.PHONY : CMakeFiles/dse_stream_1s.dir/clean
 
 #=============================================================================
 # Target rules for target CMakeFiles/jetbus_tests.dir
 
 # All Build rule for target.
 CMakeFiles/jetbus_tests.dir/all: CMakeFiles/dse_device.dir/all
-CMakeFiles/jetbus_tests.dir/all: _deps/catch2-build/src/CMakeFiles/Catch2WithMain.dir/all
 CMakeFiles/jetbus_tests.dir/all: _deps/catch2-build/src/CMakeFiles/Catch2.dir/all
+CMakeFiles/jetbus_tests.dir/all: _deps/catch2-build/src/CMakeFiles/Catch2WithMain.dir/all
 CMakeFiles/jetbus_tests.dir/all: CMakeFiles/jetbus_core.dir/all
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/jetbus_tests.dir/build.make CMakeFiles/jetbus_tests.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/jetbus_tests.dir/build.make CMakeFiles/jetbus_tests.dir/build
