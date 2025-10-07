@@ -56,6 +56,7 @@ namespace Hbm.Automation.Api.Weighing.Examples.GUIsimple
         private AdjustmentWeigher _adjustmentWeigher;
         private string _ipAddress = DEFAULT_IP_ADDRESS;
         private int _timerInterval = 200;
+        private DSEJetConnection _jetConnection; // keep reference to hook logs
 
         #endregion
 
@@ -90,21 +91,40 @@ namespace Hbm.Automation.Api.Weighing.Examples.GUIsimple
         {
             this._ipAddress = txtIPAddress.Text;
 
-            // Creating objects of DSEJetConnection:
-            DSEJetConnection _jetConnection = new DSEJetConnection(_ipAddress);
-            _wtxDevice = new DSEJet(_jetConnection, 500, update);
-
-            // Connection establishment via Jet
             try
             {
+                // Creating objects of DSEJetConnection:
+                _jetConnection = new DSEJetConnection(_ipAddress);
+
+                // surface communication logs to UI
+                _jetConnection.CommunicationLog += (s, e) =>
+                {
+                    try { this.BeginInvoke(new Action(() => AppendInfo($"LOG: {e.Args}"))); } catch { }
+                };
+
+                // honor configured timer interval
+                _wtxDevice = new DSEJet(_jetConnection, Math.Max(50, _timerInterval), update);
+
+                // Connection establishment via Jet
                 _wtxDevice.Connect(5000);
             }
-            catch (Exception)
+            catch (System.IO.FileNotFoundException fnf)
             {
-                DisplayText(MESSAGE_CONNECTION_FAILED);
+                picNE107.Image = GUISimple.Properties.Resources.NE107_DiagnosisPassive;
+                DisplayText($"{MESSAGE_CONNECTION_FAILED}{Environment.NewLine}{fnf.Message}{Environment.NewLine}Dica: adicione os pacotes 'SharpJet' e 'Newtonsoft.Json' também no projeto GUIsimple.");
+                return;
+            }
+            catch (Exception ex)
+            {
+                picNE107.Image = GUISimple.Properties.Resources.NE107_DiagnosisPassive;
+                DisplayText($"{MESSAGE_CONNECTION_FAILED} {Environment.NewLine}{ex.Message}");
+                if (ex.InnerException != null)
+                {
+                    AppendInfo($"Inner: {ex.InnerException.Message}");
+                }
             }
 
-            if (_wtxDevice.IsConnected)
+            if (_wtxDevice != null && _wtxDevice.IsConnected)
             {
                 picNE107.Image = GUISimple.Properties.Resources.NE107_DiagnosisActive;
                 GUISimple.Properties.Settings.Default.IPAddress = this._ipAddress;
@@ -113,7 +133,10 @@ namespace Hbm.Automation.Api.Weighing.Examples.GUIsimple
             else
             {
                 picNE107.Image = GUISimple.Properties.Resources.NE107_DiagnosisPassive;
-                DisplayText(MESSAGE_CONNECTION_FAILED);
+                if (txtInfo.Text.IndexOf(MESSAGE_CONNECTION_FAILED, StringComparison.OrdinalIgnoreCase) < 0)
+                {
+                    DisplayText(MESSAGE_CONNECTION_FAILED);
+                }
             }
 
         }
@@ -127,6 +150,11 @@ namespace Hbm.Automation.Api.Weighing.Examples.GUIsimple
         {
             this.BeginInvoke(new Action(() =>
             {
+                if (_wtxDevice == null || !_wtxDevice.IsConnected)
+                {
+                    return;
+                }
+
                 DisplayText("Net:" + _wtxDevice.PrintableWeight.Net + _wtxDevice.Unit + Environment.NewLine
                 + "Gross:" + _wtxDevice.PrintableWeight.Gross + _wtxDevice.Unit + Environment.NewLine
                 + "Tara:" + _wtxDevice.PrintableWeight.Tare + _wtxDevice.Unit);
@@ -184,6 +212,12 @@ namespace Hbm.Automation.Api.Weighing.Examples.GUIsimple
             Application.DoEvents();
         }
 
+        private void AppendInfo(string text)
+        {
+            txtInfo.AppendText(Environment.NewLine + text);
+            Application.DoEvents();
+        }
+
         /// <summary>
         /// Connects to device
         /// </summary>
@@ -209,6 +243,11 @@ namespace Hbm.Automation.Api.Weighing.Examples.GUIsimple
         /// <param name="e"></param>
         private void cmdGrossNet_Click(object sender, EventArgs e)
         {
+            if (_wtxDevice == null || !_wtxDevice.IsConnected)
+            {
+                DisplayText("Device not connected.");
+                return;
+            }
             _wtxDevice.SetGross();
         }
 
@@ -219,6 +258,11 @@ namespace Hbm.Automation.Api.Weighing.Examples.GUIsimple
         /// <param name="e"></param>
         private void cmdZero_Click(object sender, EventArgs e)
         {
+            if (_wtxDevice == null || !_wtxDevice.IsConnected)
+            {
+                DisplayText("Device not connected.");
+                return;
+            }
             _wtxDevice.Zero();
         }
 
@@ -229,6 +273,11 @@ namespace Hbm.Automation.Api.Weighing.Examples.GUIsimple
         /// <param name="e"></param>
         private void cmdTare_Click(object sender, EventArgs e)
         {
+            if (_wtxDevice == null || !_wtxDevice.IsConnected)
+            {
+                DisplayText("Device not connected.");
+                return;
+            }
             _wtxDevice.Tare();
         }
 
@@ -260,6 +309,12 @@ namespace Hbm.Automation.Api.Weighing.Examples.GUIsimple
 
         private void button1_Click(object sender, EventArgs e)
         {
+            if (_wtxDevice == null || !_wtxDevice.IsConnected)
+            {
+                DisplayText("Device not connected.");
+                return;
+            }
+
             string display = "";
             switch (comboBox1.SelectedItem)
             {
