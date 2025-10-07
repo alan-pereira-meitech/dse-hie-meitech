@@ -8,6 +8,14 @@ TestResults/
 .axoCover/
 .vs/
 
+# CMake build artifacts
+build/
+cmake-build*/
+
+# Local dependency caches
+_deps/
+
+
 /Examples/NETStandard2TestLib
 Doc/log.log
 Automation-API-Doc/debug.log
