@@ -32,8 +32,26 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageReference Include="SharpJet" Version="2.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ThirdParty\SharpJet\SharpJet\SharpJet.csproj" />
+  </ItemGroup>
+
+  <!-- Use vendored Newtonsoft.Json built from submodule -->
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net45' ">
+    <Reference Include="Newtonsoft.Json">
+      <SpecificVersion>false</SpecificVersion>
+      <Private>true</Private>
+      <HintPath>..\ThirdParty\Newtonsoft.Json\Src\Newtonsoft.Json\bin\Debug\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
+    <Reference Include="Newtonsoft.Json">
+      <SpecificVersion>false</SpecificVersion>
+      <Private>true</Private>
+      <HintPath>..\ThirdParty\Newtonsoft.Json\Src\Newtonsoft.Json\bin\Debug\netstandard2.0\Newtonsoft.Json.dll</HintPath>
+    </Reference>
   </ItemGroup>
   
   <ItemGroup>

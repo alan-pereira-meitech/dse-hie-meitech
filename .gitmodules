@@ -1,0 +1,6 @@
+[submodule "ThirdParty/SharpJet"]
+	path = ThirdParty/SharpJet
+	url = https://github.com/HBM/SharpJet
+[submodule "ThirdParty/Newtonsoft.Json"]
+	path = ThirdParty/Newtonsoft.Json
+	url = https://github.com/JamesNK/Newtonsoft.Json
