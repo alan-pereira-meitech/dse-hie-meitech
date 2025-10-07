@@ -94,8 +94,6 @@
             this.cboDeviceType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cboDeviceType.FormattingEnabled = true;
             this.cboDeviceType.Items.AddRange(new object[] {
-            "WTX (Jet)",
-            "WTX (Modbus/TCP)",
             "DSE (Jet)"});
             this.cboDeviceType.Location = new System.Drawing.Point(111, 54);
             this.cboDeviceType.Name = "cboDeviceType";

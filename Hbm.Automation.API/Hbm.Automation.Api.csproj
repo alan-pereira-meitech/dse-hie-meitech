@@ -12,6 +12,18 @@
   <ItemGroup>
     <Compile Remove="Data\DataStandardJet.cs" />
     <Compile Remove="Data\DataStandardModbus.cs" />
+    <!-- Remove WTX Modbus and Modbus data -->
+    <Compile Remove="Weighing\WTX\Modbus\**\*.cs" />
+    <Compile Remove="Weighing\WTX\WTXModbus.cs" />
+    <Compile Remove="Data\ModbusData*.cs" />
+    <!-- Remove WTX Jet device class (not used by DSE) but keep Jet commands/command types -->
+    <Compile Remove="Weighing\WTX\WTXJet.cs" />
+    <!-- Optional: remove Jet connection for WTX if DSE uses its own connection -->
+    <Compile Remove="Weighing\WTX\Jet\JetBusConnection.cs" />
+    <!-- Remove extended Jet Data types not used by DSE -->
+    <Compile Remove="Data\JetDataFillerExtended.cs" />
+    <Compile Remove="Data\JetDataLimitSwitch.cs" />
+    <Compile Remove="Data\JetDataDigitalIO.cs" />
   </ItemGroup>
   
   <ItemGroup>
@@ -19,10 +31,8 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
-    <PackageReference Include="NUnit" Version="3.13.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="SharpJet" Version="2.0.0" />
-    <PackageReference Include="NModbus" Version="3.0.62" />
   </ItemGroup>
   
   <ItemGroup>

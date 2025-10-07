@@ -34,16 +34,13 @@ namespace Hbm.Automation.Api.Weighing.Examples.GUIsimple
     using Hbm.Automation.Api.Weighing;
     using Hbm.Automation.Api.Weighing.DSE;
     using Hbm.Automation.Api.Weighing.DSE.Jet;
-    using Hbm.Automation.Api.Weighing.Examples.GUISimple;
-    using Hbm.Automation.Api.Weighing.WTX;
-    using Hbm.Automation.Api.Weighing.WTX.Jet;
-    using Hbm.Automation.Api.Weighing.WTX.Modbus;
+    using Hbm.Automation.Api.Weighing.Examples.GUISimple; // For AdjustmentCalculator and AdjustmentWeigher
     using System;
     using System.Windows.Forms;
 
     /// <summary>
     /// This application example demonstrates the usage of HBM Weighing-API.
-    /// It shows how to connect a WTX device via Modbus and Jetbus, how to get weight values, to calibrate and how to adjust the scale.
+    /// It shows how to connect a DSE device via Jet, how to get weight values, to calibrate and how to adjust the scale.
     /// </summary>
     public partial class GUIsimpleForm : Form
     {
@@ -71,9 +68,15 @@ namespace Hbm.Automation.Api.Weighing.Examples.GUIsimple
         public GUIsimpleForm(string[] args)
         {
             InitializeComponent();
-            DisplayText("Check IP address, select 'Jet' or 'Modbus/TCP' and press 'Connect'.");
+            DisplayText("Check IP address and press 'Connect'.");
             EvaluateCommandLine(args);
             txtIPAddress.Text = _ipAddress;
+            // Force device type combo to DSE (Jet) only
+            if (this.cboDeviceType.Items.Count > 0)
+            {
+                this.cboDeviceType.SelectedIndex = 0;
+                this.cboDeviceType.Enabled = false;
+            }
             picNE107.Image = GUISimple.Properties.Resources.NE107_DiagnosisPassive;
         }
         #endregion
@@ -81,33 +84,17 @@ namespace Hbm.Automation.Api.Weighing.Examples.GUIsimple
         #region =============== protected & private methods ================
 
         /// <summary>
-        /// Initialze a Jetbus or Modbus/Tcp connection, creates objects of INetConnection derivations, BaseWtDevice derivations
+        /// Initialize a DSE Jet connection and create the device
         /// </summary>
         private void InitializeConnection()
         {
             this._ipAddress = txtIPAddress.Text;
 
-            if (this.cboDeviceType.SelectedIndex == 0)
-            {
-                // Creating objects of JetBusConnection and WTXJet: 
-                JetBusConnection _jetConnection = new JetBusConnection(_ipAddress, "Administrator", "wtx");
-                _wtxDevice = new WTXJet(_jetConnection, 500, update);
-            }
-            else if (this.cboDeviceType.SelectedIndex == 1)
-            {
-                // Creating objects of ModbusTcpConnection and WTXModbus: 
-                ModbusTCPConnection _modbusConnection = new ModbusTCPConnection(this._ipAddress);
-                _wtxDevice = new WTXModbus(_modbusConnection, this._timerInterval, this.update);
+            // Creating objects of DSEJetConnection:
+            DSEJetConnection _jetConnection = new DSEJetConnection(_ipAddress);
+            _wtxDevice = new DSEJet(_jetConnection, 500, update);
 
-            }
-            else
-            {
-                // Creating objects of DSEJetConnection: 
-                DSEJetConnection _jetConnection = new DSEJetConnection(_ipAddress);
-                _wtxDevice = new DSEJet(_jetConnection, 500, update);
-            }
-
-            // Connection establishment via Modbus or Jetbus            
+            // Connection establishment via Jet
             try
             {
                 _wtxDevice.Connect(5000);
@@ -121,7 +108,6 @@ namespace Hbm.Automation.Api.Weighing.Examples.GUIsimple
             {
                 picNE107.Image = GUISimple.Properties.Resources.NE107_DiagnosisActive;
                 GUISimple.Properties.Settings.Default.IPAddress = this._ipAddress;
-                GUISimple.Properties.Settings.Default.DeviceType = cboDeviceType.SelectedIndex;
                 GUISimple.Properties.Settings.Default.Save();
             }
             else
@@ -170,36 +156,22 @@ namespace Hbm.Automation.Api.Weighing.Examples.GUIsimple
         /// <summary>
         /// Command line control
         /// </summary>
-        /// <param name="args">Possible arguments: modbus or jet, ip address</param>
+        /// <param name="args">Possible arguments: ip address, timer interval</param>
         private void EvaluateCommandLine(string[] args)
         {
+            // Device type is fixed to DSE (Jet)
             if (args.Length > 0)
             {
-                if (args[0].ToLower() == "jet")
-                {
-                    cboDeviceType.SelectedIndex = 0;
-                }
-                else if (args[0].ToLower() == "modbus")
-                {
-                    cboDeviceType.SelectedIndex = 1;
-                }
-                else if (args[0].ToLower() == "dse")
-                {
-                    cboDeviceType.SelectedIndex = 2;
-                }
+                // If first arg is not an IP, treat it as IP anyway for simplicity
+                _ipAddress = args[0];
             }
             else
             {
-                cboDeviceType.SelectedIndex = GUISimple.Properties.Settings.Default.DeviceType;
+                _ipAddress = GUISimple.Properties.Settings.Default.IPAddress;
             }
 
             if (args.Length > 1)
-                _ipAddress = args[1];
-            else
-                _ipAddress = GUISimple.Properties.Settings.Default.IPAddress;
-
-            if (args.Length > 2)
-                this._timerInterval = Convert.ToInt32(args[2]);
+                this._timerInterval = Convert.ToInt32(args[1]);
         }
 
         /// <summary>
@@ -213,7 +185,7 @@ namespace Hbm.Automation.Api.Weighing.Examples.GUIsimple
         }
 
         /// <summary>
-        /// Connects to wtx device
+        /// Connects to device
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -226,7 +198,7 @@ namespace Hbm.Automation.Api.Weighing.Examples.GUIsimple
                 _wtxDevice = null;
             }
 
-            DisplayText("Connecting...");
+            DisplayText(MESSAGE_CONNECTING);
             this.InitializeConnection();
         }
 
@@ -247,14 +219,7 @@ namespace Hbm.Automation.Api.Weighing.Examples.GUIsimple
         /// <param name="e"></param>
         private void cmdZero_Click(object sender, EventArgs e)
         {
-            try
-            {
-                _wtxDevice.Zero();
-            }
-            catch (JetBusException ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
+            _wtxDevice.Zero();
         }
 
         /// <summary>
@@ -298,24 +263,6 @@ namespace Hbm.Automation.Api.Weighing.Examples.GUIsimple
             string display = "";
             switch (comboBox1.SelectedItem)
             {
-                /**
-                 *  Serial number
-                    Device identification
-                    Firmware version
-                    Weight step
-                    Scale range
-                    Tare mode
-                    Weight stable
-                    Manual tare value
-                    Maximum capacity
-                    Calibration weight
-                    Zero signal
-                    Nominal signal
-                    Connection
-                    Connection type
-                    Application mode
-                 * **/
-
                 case "Serial number":
                     display = _wtxDevice.SerialNumber;
                     break;
