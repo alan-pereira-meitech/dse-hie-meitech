@@ -1,0 +1,1 @@
+/usr/bin/c++ -O2 -g -DNDEBUG CMakeFiles/dse_console_example.dir/examples/dse_console_example.cpp.o -o dse_console_example  libdse_device.a libjetbus_core.a /usr/lib/x86_64-linux-gnu/libboost_system.so.1.74.0 

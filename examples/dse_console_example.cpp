@@ -13,7 +13,15 @@ int main(int argc, char** argv) {
 
     const std::string ip_address = argv[1];
     jetbus::JetBusClient::Options client_options;
-    client_options.url = "ws://" + ip_address + ":80/jet/canopen";
+    // Se o argumento já for uma URL (ws:// ou wss://), use direto; senão, monte ws://<ip>/jet/canopen
+    if (ip_address.rfind("ws://", 0) == 0 || ip_address.rfind("wss://", 0) == 0) {
+        client_options.url = ip_address;
+    } else {
+        // Não inclua :80; o parse_url já usa 80 como default para ws
+        client_options.url = "ws://" + ip_address + "/jet/canopen";
+    }
+    // Debug opcional
+    fprintf(stderr, "[DEBUG] Using URL: %s\n", client_options.url.c_str());
 
     dse::Device::Options device_options;
     device_options.client_options = client_options;

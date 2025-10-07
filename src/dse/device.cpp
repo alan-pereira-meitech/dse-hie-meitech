@@ -71,11 +71,24 @@ void Device::connect() {
         subscriptions_.emplace(path, token);
     }
 
-    const bool ready = client_.wait_for(jetbus::commands::cia461_net_value().path,
+    // antes do wait_for: garanta a inscrição (fetch) do path de process data
+    const auto pd_path = jetbus::commands::cia461_net_value().path;
+    client_.fetch(pd_path);
+
+    // aumente o prazo para a 1ª amostra chegar
+    auto tmo = std::chrono::seconds(5);
+    fprintf(stderr,
+            "[DEBUG] Waiting up to %lld ms for process data at path %s\n",
+            (long long)std::chrono::duration_cast<std::chrono::milliseconds>(tmo).count(),
+            pd_path.c_str());
+
+    // a condição continua “valor não vazio”
+    const bool ready = client_.wait_for(pd_path,
                                         [](const std::string& value) { return !value.empty(); },
-                                        options_.process_data_interval * 5);
+                                        tmo);
     if (!ready) {
-        throw jetbus::JetBusError("Timeout waiting for process data");
+        // detalhe útil no erro
+        throw jetbus::JetBusError(std::string("Timeout waiting for process data at path: ") + pd_path);
     }
 
     refresh_process_data();

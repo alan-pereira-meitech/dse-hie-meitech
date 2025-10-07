@@ -316,7 +316,8 @@ namespace Hbm.Automation.Api.Weighing.Examples.GUIsimple
             }
 
             string display = "";
-            switch (comboBox1.SelectedItem)
+            var selectedText = comboBox1.SelectedItem as string ?? comboBox1.Text;
+            switch (selectedText)
             {
                 case "Serial number":
                     display = _wtxDevice.SerialNumber;

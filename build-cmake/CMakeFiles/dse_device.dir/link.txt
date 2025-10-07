@@ -1,0 +1,2 @@
+/usr/bin/ar qc libdse_device.a CMakeFiles/dse_device.dir/src/dse/device.cpp.o
+/usr/bin/ranlib libdse_device.a

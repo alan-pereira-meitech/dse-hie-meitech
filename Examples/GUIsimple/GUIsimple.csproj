@@ -119,10 +119,22 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Hbm.Automation.Api\Hbm.Automation.Api.csproj">
-      <Project>{f8fb1d85-0fba-4905-a559-a1c654675662}</Project>
-      <Name>Hbm.Automation.Api</Name>
-    </ProjectReference>
+    <Reference Include="Hbm.Automation.Api">
+      <HintPath>..\..\Hbm.Automation.API\bin\Debug\net45\Hbm.Automation.Api.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+    <Reference Include="SharpJet">
+      <HintPath>..\..\ThirdParty\SharpJet\SharpJet\bin\Debug\net45\SharpJet.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\..\Hbm.Automation.API\bin\Debug\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+    <Reference Include="websocket-sharp">
+      <HintPath>..\..\Hbm.Automation.API\bin\Debug\net45\websocket-sharp.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
