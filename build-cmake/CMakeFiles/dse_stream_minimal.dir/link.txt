@@ -1,1 +1,0 @@
-/usr/bin/c++ -O3 -DNDEBUG CMakeFiles/dse_stream_minimal.dir/examples/stream_minimal.cpp.o -o dse_stream_minimal  libdse_device.a libjetbus_core.a /usr/lib/x86_64-linux-gnu/libboost_system.so.1.74.0 

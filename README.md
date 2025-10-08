@@ -44,7 +44,7 @@ O servidor ficará disponível em `http://localhost:3000`. A página React recom
 
 ### Não é necessário compilar C++
 
-Todo o fluxo agora roda apenas em Node.js + TypeScript + React. O código C++ original permanece no repositório apenas como referência histórica; não é preciso instalar toolchains, CMake ou bibliotecas nativas para executar a aplicação web.
+Todo o fluxo agora roda apenas em Node.js + TypeScript + React. O código C++ original foi removido para simplificar o repositório, portanto não é preciso instalar toolchains, CMake ou bibliotecas nativas para executar a aplicação web.
 
 ## Produção / build
 
