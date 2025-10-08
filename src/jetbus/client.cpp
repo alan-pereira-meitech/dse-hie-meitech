@@ -247,7 +247,7 @@ void JetBusClient::notify_fetch(const std::string& token, bool success) {
     }
 }
 
-void JetBusClient::handle_message(const std::string& text) {
+void JetBusClient::handle_message(std::string_view text) {
     auto message = nlohmann::json::parse(text, nullptr, false);
     if (message.is_discarded()) {
         return;
@@ -396,30 +396,43 @@ void JetBusClient::run() {
         delay = options_.reconnect_initial_delay;
 
         while (running_.load()) {
-            PendingMessage message;
+            // Drain entire queue before blocking on read
+            std::vector<PendingMessage> messages_to_send;
             {
                 std::unique_lock lock(queue_mutex_);
-                queue_cv_.wait_for(lock, std::chrono::milliseconds(50), [&] {
+                // Use wait_for with short timeout to allow periodic reading even without messages
+                queue_cv_.wait_for(lock, std::chrono::milliseconds(10), [&] {
                     return !queue_.empty() || !running_.load();
                 });
                 if (!running_.load()) {
                     break;
                 }
-                if (!queue_.empty()) {
-                    message = std::move(queue_.front());
+                // Move all pending messages to avoid multiple lock/unlock cycles
+                while (!queue_.empty()) {
+                    messages_to_send.emplace_back(std::move(queue_.front()));
                     queue_.pop_front();
                 }
             }
 
-            if (!message.payload.empty()) {
-                if (options_.enable_debug_logs) printf("[DEBUG] Writing payload: %s\n", message.payload.c_str());
-                ws.write(boost::asio::buffer(message.payload), ec);
-                if (ec) {
-                    printf("[ERROR] write failed: %s\n", ec.message().c_str());
-                    break;
+            // Send all queued messages
+            bool write_error = false;
+            for (const auto& message : messages_to_send) {
+                if (!message.payload.empty()) {
+                    if (options_.enable_debug_logs) printf("[DEBUG] Writing payload: %s\n", message.payload.c_str());
+                    ws.write(boost::asio::buffer(message.payload), ec);
+                    if (ec) {
+                        printf("[ERROR] write failed: %s\n", ec.message().c_str());
+                        write_error = true;
+                        break;
+                    }
                 }
             }
+            
+            if (write_error) {
+                break;
+            }
 
+            // Read and process incoming frames immediately
             ws.next_layer().expires_after(std::chrono::milliseconds(200));
             buffer.consume(buffer.size());
             ws.read(buffer, ec);

@@ -170,8 +170,8 @@ CMakeFiles/dse_device.dir/clean:
 # Target rules for target CMakeFiles/dse_stream_1s.dir
 
 # All Build rule for target.
-CMakeFiles/dse_stream_1s.dir/all: CMakeFiles/dse_device.dir/all
 CMakeFiles/dse_stream_1s.dir/all: CMakeFiles/jetbus_core.dir/all
+CMakeFiles/dse_stream_1s.dir/all: CMakeFiles/dse_device.dir/all
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/dse_stream_1s.dir/build.make CMakeFiles/dse_stream_1s.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/dse_stream_1s.dir/build.make CMakeFiles/dse_stream_1s.dir/build
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/alan/git/dse-hie-meitech/build-cmake/CMakeFiles --progress-num=93,94 "Built target dse_stream_1s"
@@ -197,10 +197,10 @@ CMakeFiles/dse_stream_1s.dir/clean:
 # Target rules for target CMakeFiles/jetbus_tests.dir
 
 # All Build rule for target.
-CMakeFiles/jetbus_tests.dir/all: CMakeFiles/dse_device.dir/all
+CMakeFiles/jetbus_tests.dir/all: CMakeFiles/jetbus_core.dir/all
 CMakeFiles/jetbus_tests.dir/all: _deps/catch2-build/src/CMakeFiles/Catch2.dir/all
 CMakeFiles/jetbus_tests.dir/all: _deps/catch2-build/src/CMakeFiles/Catch2WithMain.dir/all
-CMakeFiles/jetbus_tests.dir/all: CMakeFiles/jetbus_core.dir/all
+CMakeFiles/jetbus_tests.dir/all: CMakeFiles/dse_device.dir/all
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/jetbus_tests.dir/build.make CMakeFiles/jetbus_tests.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/jetbus_tests.dir/build.make CMakeFiles/jetbus_tests.dir/build
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/alan/git/dse-hie-meitech/build-cmake/CMakeFiles --progress-num=98,99,100 "Built target jetbus_tests"

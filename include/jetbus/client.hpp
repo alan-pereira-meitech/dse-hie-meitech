@@ -13,6 +13,7 @@
 #include <optional>
 #include <future>
 #include <memory>
+#include <string_view>
 #include <queue>
 #include <string>
 #include <thread>
@@ -68,7 +69,7 @@ private:
 
     void run();
     void enqueue(PendingMessage message);
-    void handle_message(const std::string& text);
+    void handle_message(std::string_view text);
     void notify_fetch(const std::string& token, bool success);
 
     Options options_;
