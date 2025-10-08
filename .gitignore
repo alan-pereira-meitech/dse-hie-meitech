@@ -8,6 +8,10 @@ TestResults/
 .axoCover/
 .vs/
 
+# Node/TypeScript
+node_modules/
+dist/
+
 # CMake build artifacts
 build/
 cmake-build*/

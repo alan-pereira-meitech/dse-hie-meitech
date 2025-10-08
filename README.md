@@ -1,167 +1,82 @@
-# DSE JetBus C++ Client
+# DSE JetBus Node + TypeScript
 
-Modern C++17 client for HBM DSE devices over JetBus (WebSocket) with a single, simple streaming example and unit tests. Optionally, a Modbus-only sample is provided via a simple Makefile.
+Refatoração do cliente JetBus para TypeScript/Node.js com comunicação WebSocket e painel web que expõe todas as operações declaradas em `device.hpp` (agora portadas para TypeScript). O projeto usa Express para a API REST/WebSocket proxy e uma interface web estática para interação humana.
 
-## Build (CMake)
+## Visão geral
 
-Prerequisites:
-- C++17 compiler (g++/clang++)
-- CMake >= 3.16
-- Internet access on first configure (to fetch Catch2 and nlohmann/json; Boost headers are auto-downloaded if not found)
+- **WebSocket JetBus**: cliente TypeScript inspirado no código C++ original (`jetbus/client.*`).
+- **Device API**: classe `Device` em TypeScript com os mesmos métodos documentados em `device.hpp`.
+- **Interface Web**: página única (`public/index.html`) que lista e executa todas as funções disponíveis, além de exibir dados de processo em tempo real.
+- **Configuração flexível**: informe a URL do dispositivo diretamente na UI ou via variável de ambiente `DEVICE_URL`.
 
-Steps:
-1) Configure a build directory in Release mode
-2) Build targets (libraries, example, and tests)
+## Pré-requisitos
 
-Artifacts are placed in the build directory (e.g., `build-cmake/`).
+- Node.js 18+ (recomendado 20 LTS)
+- npm 9+
 
-## Run the streaming example
-
-Primary example (1-second loop): `dse_stream_1s`
-
-Quick start with helper script (zsh):
+## Instalação
 
 ```bash
-chmod +x examples/run_stream.sh
-examples/run_stream.sh 192.168.1.100
+npm install
 ```
 
-Or run the binary directly (IP or full URL):
+## Desenvolvimento
+
+Execute o servidor com `ts-node` (hot reload simples).
 
 ```bash
-build-cmake/dse_stream_1s 192.168.1.100
-# or
-build-cmake/dse_stream_1s ws://192.168.1.100/jet/canopen
+npm run dev
 ```
 
-What it does:
-- Connects to the device over WebSocket (subprotocol `jet`)
-- Prints Net and Gross once per second with the proper unit/decimals
-- Runs indefinitely until you press Ctrl+C
+O servidor ficará disponível em `http://localhost:3000`. A página web permite conectar/desconectar, visualizar dados de processo e executar qualquer função do dispositivo.
 
-Notes:
-- The WebSocket handshake is tuned to match embedded server expectations:
-  - `Sec-WebSocket-Protocol: jet`
-  - `Sec-WebSocket-Version: 13`
-  - `Connection: Upgrade` and `Upgrade: websocket`
-  - No `Origin`, `User-Agent`, or extensions; permessage-deflate disabled
-- Default scheme/port is `ws`/80 unless you provide `wss` explicitly
-
-## Tests
-
-Catch2-based unit tests are included. After building, run the test binary from your build directory. All tests should pass.
-
-## Como executar (exemplo de streaming)
-
-Exemplo principal (loop a cada 1 segundo): dse_stream_1s
-
-Com script (zsh):
+## Produção / build
 
 ```bash
-chmod +x examples/run_stream.sh
-examples/run_stream.sh 192.168.1.100
+npm run build
+npm start
 ```
 
-Ou rode o binário diretamente (IP ou URL completa):
+Os arquivos compilados ficam em `dist/`. O comando `npm start` sobe o servidor Express servindo o bundle JavaScript e os arquivos estáticos.
 
-```bash
-build-cmake/dse_stream_1s 192.168.1.100
-# ou
-build-cmake/dse_stream_1s ws://192.168.1.100/jet/canopen
+## Variáveis de ambiente
+
+- `DEVICE_URL`: URL WebSocket padrão para o JetBus (ex: `ws://192.168.1.100/jet/canopen`). Pode ser sobrescrita pela interface web.
+- `PORT`: porta HTTP da aplicação (default 3000).
+
+## Estrutura
+
+```
+├── src
+│   ├── dse
+│   │   ├── device.ts              # Classe Device com os métodos portados de device.hpp
+│   │   └── deviceFunctions.ts     # Metadados usados pela UI para gerar a lista de funções
+│   ├── jetbus
+│   │   ├── client.ts              # Cliente JetBus/WebSocket
+│   │   ├── commands.ts            # Comandos e paths equivalentes aos do C++
+│   │   ├── measurementUtils.ts    # Funções utilitárias (double<->digit)
+│   │   └── processData.ts         # Parser de dados de processo
+│   └── server.ts                  # API Express + servidor de arquivos estáticos
+├── public
+│   └── index.html                 # Interface web (lista todas as funções disponíveis)
+└── tsconfig.json
 ```
 
-O programa conecta no dispositivo e imprime Net e Gross uma vez por segundo, até você pressionar Ctrl+C.
+## Como usar
 
-## Como testar
+1. Defina a URL do dispositivo na interface ou via `DEVICE_URL`.
+2. Clique em **Conectar** para estabelecer a sessão JetBus.
+3. Acompanhe os dados de processo (peso líquido, bruto, tara, flags de status etc.).
+4. Utilize os cartões de funções para executar comandos ou atualizar parâmetros (tare, zero, ajustes, leitura de identificação, etc.).
 
-Após compilar o projeto com CMake, execute:
+Os resultados das chamadas são exibidos no próprio cartão, permitindo verificar respostas numéricas, booleanas ou mensagens de erro.
 
-```bash
-build-cmake/jetbus_tests
-```
+## Observações
 
-Todos os testes devem passar.
+- O cliente JetBus mantém cache dos valores recebidos via eventos `fetch` e replica a semântica do código C++ original (incluindo timeouts e códigos de comando).
+- A UI é responsiva e utiliza apenas HTML/CSS/JS, sem dependências externas.
+- Para execução headless (sem UI), a API REST pode ser utilizada diretamente (`/api/device/functions/:name`).
 
-## Operações disponíveis (Leitura e Escrita)
+## Licença
 
-A API de alto nível está na classe `dse::Device` (veja `include/dse/device.hpp`).
-
-Leituras (getters):
-- Pesos e formato:
-  - `double net_weight()` — Peso líquido
-  - `double gross_weight()` — Peso bruto
-  - `double tare_weight()` — Tara
-  - `std::string unit()e (ex.: kg)
-  - `int decimals()` — Casas decima` — Unidadis
-- Estados/flags da balança:
-  - `dse::TareMode tare_mode()`
-  - `bool weight_stable()`
-  - `bool zero_required()`
-  - `bool center_of_zero()`
-  - `bool inside_zero()`
-  - `bool legal_for_trade()`
-  - `bool underload()`
-  - `bool overload()`
-  - `bool higher_safe_load_limit()`
-  - `bool general_scale_error()`
-  - `bool scale_alarm()`
-- Parâmetros/identificação:
-  - `std::int32_t weight_step()`
-  - `std::int32_t scale_range()`
-  - `std::int32_t maximum_capacity()`
-  - `std::int32_t zero_value()`
-  - `std::int32_t zero_signal()`
-  - `std::int32_t nominal_signal()`
-  - `std::string identification()`
-  - `std::string firmware_version()`
-  - `std::uint32_t serial_number()`
-
-Escritas (comandos e parâmetros):
-- Comandos de operação:
-  - `void zero()` — Zerar
-  - `void tare()` — Fazer tara
-  - `void set_gross()` — Voltar a bruto
-  - `void record_weight()` — Registrar peso
-- Parâmetros:
-  - `void set_unit(const std::string& unit_code)` — Ajustar unidade
-  - `void set_manual_tare(double value)` — Definir tara manual
-  - `void set_maximum_capacity(std::int32_t value)` — Capacidade máxima
-  - `void set_zero_signal(std::int32_t value)` — Sinal de zero
-  - `void set_nominal_signal(std::int32_t value)` — Sinal nominal
-- Persistência:
-  - `void save_all_parameters()` — Salvar parâmetros
-  - `void restore_default_parameters()` — Restaurar parâmetros padrão
-- Ajustes/Calibração:
-  - `bool adjust_zero_signal()`
-  - `bool adjust_nominal_signal()`
-  - `bool adjust_nominal_signal_with_calibration_weight(double weight)`
-  - `void calculate_adjustment(double scale_zero_mvv, double capacity_mvv)`
-
-Para stream de dados, você pode usar `set_process_data_callback(...)` para receber atualizações contínuas (Net/Gross/Tare, unidade, flags). O exemplo `dse_stream_1s` mostra leitura periódica com getters.
-
-<!-- Modbus-only Makefile sample removed; this repository now focuses on the JetBus/WebSocket client. -->
-
-## Troubleshooting
-
-- Connection refused or timeouts:
-  - Verify the device IP and that port 80 (or your custom port) is reachable
-  - Ensure you are using `ws://` (or `wss://` if TLS is required) and the path `/jet/canopen`
-  - Firewalls or NAT may block the TCP connection
-- Handshake differences:
-  - Some embedded servers are sensitive to headers; this client mirrors a known-good handshake
-  - If you customize headers, keep the `Sec-WebSocket-Protocol: jet` and version 13
-- No process data displayed:
-  - The client explicitly fetches initial process data (e.g., `601A/01`) and waits briefly; allow a few seconds after connect
-
-## Project layout
-
-- `include/` Public headers for JetBus and DSE abstractions
-- `src/` Implementations (JetBus client, commands, process data, device wrapper)
-- `examples/`
-  - `stream_every_second.cpp` – 1-second streaming example (dse_stream_1s)
-  - `run_stream.sh` – convenience runner (optional)
-- `tests/` Minimal unit tests for measurement utils and process data parsing
-
-## License
-
-No license file included.
+Nenhuma licença foi fornecida com o projeto original.
