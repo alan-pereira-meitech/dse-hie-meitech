@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import ActionsGrid from "../components/ActionsGrid";
+import FilterSettingsPanel from "../components/FilterSettingsPanel";
 import LogPanel from "../components/LogPanel";
 import PageContainer from "../components/PageContainer";
 
@@ -20,7 +21,10 @@ function SettingsPage(): JSX.Element {
       </div>
 
       <div className="grid flex-1 min-h-0 grid-cols-1 gap-8 auto-rows-fr xl:grid-cols-12 xl:items-start">
-        <ActionsGrid className="h-full xl:col-span-9" />
+        <div className="flex min-h-0 flex-col gap-8 xl:col-span-9">
+          <FilterSettingsPanel />
+          <ActionsGrid className="h-full" />
+        </div>
         <LogPanel className="h-full xl:col-span-3" />
       </div>
     </PageContainer>

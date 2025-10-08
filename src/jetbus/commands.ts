@@ -101,6 +101,18 @@ function setupRegistry(): void {
   register(makeCommand("DSEFirmwareVersion", DataType.Ascii, "100A/00"));
   register(makeCommand("DSEZeroSignal", DataType.S32, "6150/00"));
   register(makeCommand("DSENominalSignal", DataType.S32, "6151/00"));
+  register(makeCommand("DSEFilterModeStage2", DataType.U32, "6040/02"));
+  register(makeCommand("DSEFilterModeStage3", DataType.U32, "6040/03"));
+  register(makeCommand("DSEFilterModeStage4", DataType.U32, "6040/04"));
+  register(makeCommand("DSEFilterModeStage5", DataType.U32, "6040/05"));
+  register(makeCommand("DSECombFilterFrequencyStage2", DataType.U32, "3321/00"));
+  register(makeCommand("DSECombFilterFrequencyStage3", DataType.U32, "3322/00"));
+  register(makeCommand("DSECombFilterFrequencyStage4", DataType.U32, "3323/00"));
+  register(makeCommand("DSECombFilterFrequencyStage5", DataType.U32, "3324/00"));
+  register(makeCommand("DSEMovAvFilterFrequencyStage2", DataType.U32, "3331/00"));
+  register(makeCommand("DSEMovAvFilterFrequencyStage3", DataType.U32, "3332/00"));
+  register(makeCommand("DSEMovAvFilterFrequencyStage4", DataType.U32, "3333/00"));
+  register(makeCommand("DSEMovAvFilterFrequencyStage5", DataType.U32, "3334/00"));
   register(makeCommand("LDWZeroValue", DataType.S32, "2110/06"));
   register(makeCommand("LWTNominalValue", DataType.S32, "2110/07"));
   register(makeCommand("IMDApplicationMode", DataType.U08, "2010/07"));
@@ -151,6 +163,18 @@ export const commands = {
   dseFirmwareVersion: () => lookup("DSEFirmwareVersion"),
   dseZeroSignal: () => lookup("DSEZeroSignal"),
   dseNominalSignal: () => lookup("DSENominalSignal"),
+  dseFilterModeStage2: () => lookup("DSEFilterModeStage2"),
+  dseFilterModeStage3: () => lookup("DSEFilterModeStage3"),
+  dseFilterModeStage4: () => lookup("DSEFilterModeStage4"),
+  dseFilterModeStage5: () => lookup("DSEFilterModeStage5"),
+  dseCombFilterFrequencyStage2: () => lookup("DSECombFilterFrequencyStage2"),
+  dseCombFilterFrequencyStage3: () => lookup("DSECombFilterFrequencyStage3"),
+  dseCombFilterFrequencyStage4: () => lookup("DSECombFilterFrequencyStage4"),
+  dseCombFilterFrequencyStage5: () => lookup("DSECombFilterFrequencyStage5"),
+  dseMovAvFilterFrequencyStage2: () => lookup("DSEMovAvFilterFrequencyStage2"),
+  dseMovAvFilterFrequencyStage3: () => lookup("DSEMovAvFilterFrequencyStage3"),
+  dseMovAvFilterFrequencyStage4: () => lookup("DSEMovAvFilterFrequencyStage4"),
+  dseMovAvFilterFrequencyStage5: () => lookup("DSEMovAvFilterFrequencyStage5"),
   ldwZeroValue: () => lookup("LDWZeroValue"),
   lwtNominalValue: () => lookup("LWTNominalValue"),
   stoRecordWeight: () => lookup("STORecordWeight"),
