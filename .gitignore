@@ -11,10 +11,12 @@ TestResults/
 # Node/TypeScript
 node_modules/
 dist/
+public/assets/
 
 # CMake build artifacts
 build/
 cmake-build*/
+build-cmake/
 
 # Local dependency caches
 _deps/

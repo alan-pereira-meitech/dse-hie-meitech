@@ -4,20 +4,29 @@
   "description": "Node.js + TypeScript refactor of the DSE JetBus client with WebSocket connectivity and web UI.",
   "type": "module",
   "scripts": {
-    "build": "tsc",
+    "build": "npm run build:client && tsc",
+    "build:client": "esbuild src/web/index.tsx --bundle --format=esm --outdir=public/assets --sourcemap --target=es2019 --jsx=automatic --loader:.css=css --entry-names=app",
     "start": "node dist/server.js",
-    "dev": "node --loader ts-node/esm src/server.ts"
+    "dev": "concurrently \"npm:dev:server\" \"npm:dev:client\"",
+    "dev:server": "node --loader ts-node/esm src/server.ts",
+    "dev:client": "esbuild src/web/index.tsx --bundle --format=esm --outdir=public/assets --sourcemap --target=es2019 --jsx=automatic --loader:.css=css --entry-names=app --watch"
   },
   "dependencies": {
     "cors": "^2.8.5",
     "express": "^4.19.2",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
     "ws": "^8.17.0"
   },
   "devDependencies": {
     "@types/cors": "^2.8.17",
     "@types/express": "^4.17.21",
     "@types/node": "^20.12.7",
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
     "@types/ws": "^8.5.10",
+    "concurrently": "^8.2.2",
+    "esbuild": "^0.21.5",
     "ts-node": "^10.9.2",
     "typescript": "^5.4.5"
   }

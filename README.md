@@ -6,7 +6,7 @@ Refatoração do cliente JetBus para TypeScript/Node.js com comunicação WebSoc
 
 - **WebSocket JetBus**: cliente TypeScript inspirado no código C++ original (`jetbus/client.*`).
 - **Device API**: classe `Device` em TypeScript com os mesmos métodos documentados em `device.hpp`.
-- **Interface Web**: página única (`public/index.html`) que lista e executa todas as funções disponíveis, além de exibir dados de processo em tempo real.
+- **Interface Web (React)**: SPA em React + TypeScript (bundle via esbuild) que lista e executa todas as funções disponíveis, além de exibir dados de processo em tempo real.
 - **Configuração flexível**: informe a URL do dispositivo diretamente na UI ou via variável de ambiente `DEVICE_URL`.
 
 ## Pré-requisitos
@@ -34,13 +34,17 @@ Para ambientes automatizados (CI/CD), execute `npm ci` em vez de `npm install` p
 
 ## Desenvolvimento
 
-Execute o servidor com `ts-node` (hot reload simples).
+Execute o servidor Express e o bundler React em paralelo com hot reload.
 
 ```bash
 npm run dev
 ```
 
-O servidor ficará disponível em `http://localhost:3000`. A página web permite conectar/desconectar, visualizar dados de processo e executar qualquer função do dispositivo.
+O servidor ficará disponível em `http://localhost:3000`. A página React recompila automaticamente, permitindo conectar/desconectar, visualizar dados de processo e executar qualquer função do dispositivo.
+
+### Não é necessário compilar C++
+
+Todo o fluxo agora roda apenas em Node.js + TypeScript + React. O código C++ original permanece no repositório apenas como referência histórica; não é preciso instalar toolchains, CMake ou bibliotecas nativas para executar a aplicação web.
 
 ## Produção / build
 
@@ -49,7 +53,7 @@ npm run build
 npm start
 ```
 
-Os arquivos compilados ficam em `dist/`. O comando `npm start` sobe o servidor Express servindo o bundle JavaScript e os arquivos estáticos.
+O comando `npm run build` compila o servidor (TypeScript) e gera o bundle React em `public/assets`. Já `npm start` executa o servidor Express a partir de `dist/`, servindo os arquivos estáticos construídos.
 
 ## Variáveis de ambiente
 
@@ -62,15 +66,20 @@ Os arquivos compilados ficam em `dist/`. O comando `npm start` sobe o servidor E
 ├── src
 │   ├── dse
 │   │   ├── device.ts              # Classe Device com os métodos portados de device.hpp
-│   │   └── deviceFunctions.ts     # Metadados usados pela UI para gerar a lista de funções
+│   │   └── deviceFunctions.ts     # Metadados usados pela UI e API
 │   ├── jetbus
 │   │   ├── client.ts              # Cliente JetBus/WebSocket
 │   │   ├── commands.ts            # Comandos e paths equivalentes aos do C++
 │   │   ├── measurementUtils.ts    # Funções utilitárias (double<->digit)
 │   │   └── processData.ts         # Parser de dados de processo
-│   └── server.ts                  # API Express + servidor de arquivos estáticos
+│   ├── server.ts                  # API Express + servidor de arquivos estáticos
+│   └── web
+│       ├── App.tsx                # SPA React com a dashboard
+│       ├── components/            # Componentes (cartões de função etc.)
+│       ├── index.tsx              # Ponto de entrada React
+│       └── styles.css             # Estilos da interface
 ├── public
-│   └── index.html                 # Interface web (lista todas as funções disponíveis)
+│   └── index.html                 # HTML base (injeta o bundle React)
 └── tsconfig.json
 ```
 
