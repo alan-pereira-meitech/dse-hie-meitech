@@ -1,4 +1,4 @@
-import { DeviceFunctionMeta, DeviceSnapshot } from './types.js';
+import { DeviceFunctionMeta, DeviceOptionsResponse, DeviceSnapshot } from './types.js';
 
 async function fetchJson<T>(input: RequestInfo, init?: RequestInit): Promise<T> {
   const response = await fetch(input, init);
@@ -30,6 +30,10 @@ export async function disconnectDevice(): Promise<{ connected: boolean }> {
 
 export async function fetchStatus(): Promise<DeviceSnapshot> {
   return fetchJson<DeviceSnapshot>('/api/device/status');
+}
+
+export async function fetchOptions(): Promise<DeviceOptionsResponse> {
+  return fetchJson<DeviceOptionsResponse>('/api/device/options');
 }
 
 export async function fetchFunctions(): Promise<DeviceFunctionMeta[]> {

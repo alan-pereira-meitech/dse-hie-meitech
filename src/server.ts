@@ -125,6 +125,14 @@ async function main(): Promise<void> {
     });
   });
 
+  app.get('/api/device/options', (_req, res) => {
+    res.json({
+      defaultUrl: DEFAULT_URL,
+      activeUrl: currentUrl,
+      connected: deviceConnected
+    });
+  });
+
   app.post('/api/device/connect', async (req, res) => {
     try {
       const url = typeof req.body?.url === 'string' ? req.body.url : DEFAULT_URL;
@@ -134,6 +142,7 @@ async function main(): Promise<void> {
       }
       deviceConnected = true;
       broadcastWeight(device.snapshot().processData);
+      currentUrl = url;
       res.json({ connected: true, url });
     } catch (error) {
       console.error('connect error', error);

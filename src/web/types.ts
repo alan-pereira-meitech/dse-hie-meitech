@@ -27,6 +27,12 @@ export interface DeviceSnapshot {
   processData?: ProcessDataSnapshot;
 }
 
+export interface DeviceOptionsResponse {
+  defaultUrl: string;
+  activeUrl: string;
+  connected: boolean;
+}
+
 export interface WeightStreamPayload {
   type: 'weight';
   connected: boolean;

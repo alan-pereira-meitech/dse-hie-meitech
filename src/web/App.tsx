@@ -1,11 +1,11 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { connectDevice, disconnectDevice, fetchFunctions, fetchStatus, invokeFunction } from './api.js';
+import { connectDevice, disconnectDevice, fetchFunctions, fetchOptions, fetchStatus, invokeFunction } from './api.js';
 import { FunctionCard } from './components/FunctionCard.js';
 import { DeviceFunctionMeta, DeviceSnapshot, ProcessDataSnapshot, WeightStreamPayload } from './types.js';
 import { useWeightStream } from './useWeightStream.js';
 import './styles.css';
 
-const DEFAULT_URL = 'ws://127.0.0.1/jet/canopen';
+const LOCAL_DEFAULT_URL = 'ws://127.0.0.1/jet/canopen';
 
 const EMPTY_WEIGHT: WeightStreamPayload = {
   type: 'weight',
@@ -41,7 +41,8 @@ function buildProcessEntries(data: ProcessDataSnapshot) {
 }
 
 export function App() {
-  const [deviceUrl, setDeviceUrl] = useState(DEFAULT_URL);
+  const [defaultUrl, setDefaultUrl] = useState(LOCAL_DEFAULT_URL);
+  const [deviceUrl, setDeviceUrl] = useState('');
   const [connected, setConnected] = useState(false);
   const [message, setMessage] = useState('');
   const [functions, setFunctions] = useState<DeviceFunctionMeta[]>([]);
@@ -71,6 +72,22 @@ export function App() {
       .catch((error) => {
         console.error('Erro ao carregar funções', error);
       });
+    fetchOptions()
+      .then((options) => {
+        const resolvedDefault = options.defaultUrl || LOCAL_DEFAULT_URL;
+        setDefaultUrl(resolvedDefault);
+        setConnected((current) => current || options.connected);
+        setDeviceUrl((current) => {
+          if (current.trim().length > 0) {
+            return current;
+          }
+          const active = options.activeUrl?.trim();
+          return active && active.length > 0 ? active : resolvedDefault;
+        });
+      })
+      .catch((error) => {
+        console.error('Erro ao carregar opções do dispositivo', error);
+      });
     updateSnapshot().catch((error) => {
       console.error('Erro ao carregar status', error);
     });
@@ -97,8 +114,9 @@ export function App() {
   const handleConnect = useCallback(async () => {
     try {
       setMessage('Conectando...');
-      const url = deviceUrl.trim() || DEFAULT_URL;
+      const url = deviceUrl.trim() || defaultUrl || LOCAL_DEFAULT_URL;
       await connectDevice(url);
+      setDeviceUrl(url);
       setConnected(true);
       setMessage('Conectado com sucesso.');
       await updateSnapshot();
@@ -163,7 +181,7 @@ export function App() {
               type="text"
               value={deviceUrl}
               onChange={(event) => setDeviceUrl(event.target.value)}
-              placeholder={DEFAULT_URL}
+              placeholder={defaultUrl}
             />
             <div className="button-row">
               <button onClick={handleConnect} disabled={connected}>Conectar</button>

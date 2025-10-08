@@ -57,7 +57,7 @@ O comando `npm run build` compila o servidor (TypeScript) e gera o bundle React 
 
 ## Variáveis de ambiente
 
-- `DEVICE_URL`: URL WebSocket padrão para o JetBus (ex: `ws://192.168.1.100/jet/canopen`). Pode ser sobrescrita pela interface web.
+- `DEVICE_URL`: URL WebSocket padrão para o JetBus (ex: `ws://192.168.1.100/jet/canopen`). O valor também é enviado à interface web, que o usa como sugestão inicial no campo de conexão.
 - `PORT`: porta HTTP da aplicação (default 3000).
 
 ## Estrutura
@@ -85,7 +85,7 @@ O comando `npm run build` compila o servidor (TypeScript) e gera o bundle React 
 
 ## Como usar
 
-1. Defina a URL do dispositivo na interface ou via `DEVICE_URL`.
+1. Defina a URL do dispositivo na interface (o campo já vem preenchido com o valor de `DEVICE_URL`, quando configurado) ou informe-a via variável de ambiente.
 2. Clique em **Conectar** para estabelecer a sessão JetBus.
 3. Acompanhe os dados de processo (peso líquido, bruto, tara, flags de status etc.).
 4. Utilize os cartões de funções para executar comandos ou atualizar parâmetros (tare, zero, ajustes, leitura de identificação, etc.).
