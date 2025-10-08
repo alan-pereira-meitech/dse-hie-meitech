@@ -1,0 +1,24 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html,
+body {
+  background: radial-gradient(circle at top left, rgba(56, 189, 248, 0.25), transparent 55%),
+    radial-gradient(circle at top right, rgba(99, 102, 241, 0.25), transparent 55%),
+    #0f172a;
+}
+
+@layer components {
+  .panel {
+    @apply rounded-2xl border border-slate-500/40 bg-slate-900/60 p-6 shadow-2xl shadow-slate-950/30;
+  }
+
+  .status-pill {
+    @apply inline-flex items-center gap-2 rounded-full border border-slate-500/30 bg-slate-900/70 px-3 py-1.5 text-xs font-medium text-slate-300 transition;
+  }
+
+  .status-pill.active {
+    @apply border-sky-400/50 bg-sky-500/20 text-sky-200 shadow-lg shadow-sky-500/20;
+  }
+}

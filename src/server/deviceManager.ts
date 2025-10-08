@@ -204,7 +204,7 @@ export class DeviceManager {
       printableWeight: { ...printable },
       unit: source.unit(),
       decimals: source.decimals(),
-      tareMode: this.describeTareMode(source.tareMode()),
+      tareMode: source.tareMode(),
       status: {
         weightStable: source.weightStable(),
         zeroRequired: source.zeroRequired(),

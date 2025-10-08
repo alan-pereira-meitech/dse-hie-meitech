@@ -2,8 +2,7 @@ npm-debug.log*
 .DS_Store
 node_modules/
 dist/
-public/assets/*
-!public/assets/app.js
-!public/assets/.gitkeep
-npm-debug.log*
-.DS_Store
+public/
+!public/.gitkeep
+dist-electron/
+release/
