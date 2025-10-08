@@ -1,0 +1,29 @@
+{
+  "name": "dse-hie-meitech-web",
+  "version": "1.0.0",
+  "private": true,
+  "type": "commonjs",
+  "scripts": {
+    "dev": "concurrently \"npm:bundle:frontend:watch\" \"ts-node-dev --respawn --transpile-only src/index.ts\"",
+    "build": "npm run build:server && npm run bundle:frontend",
+    "build:server": "tsc -p tsconfig.json",
+    "bundle:frontend": "esbuild web/index.ts --bundle --outdir=public/assets --format=esm --sourcemap --target=es2019 --platform=browser",
+    "bundle:frontend:watch": "esbuild web/index.ts --bundle --outdir=public/assets --format=esm --sourcemap --target=es2019 --platform=browser --watch",
+    "start": "node dist/index.js",
+    "test": "vitest"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "ws": "^8.17.0"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/node": "^20.12.7",
+    "@types/ws": "^8.5.10",
+    "concurrently": "^8.2.2",
+    "esbuild": "^0.20.2",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.4.5",
+    "vitest": "^1.5.0"
+  }
+}

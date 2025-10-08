@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>DSE JetBus Meitech</title>
+    <style>
+      :root {
+        color-scheme: light dark;
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        background: #0f172a;
+        color: #e2e8f0;
+      }
+      body {
+        margin: 0;
+        padding: 0;
+        background: radial-gradient(circle at top left, rgba(56, 189, 248, 0.25), transparent 55%),
+          radial-gradient(circle at top right, rgba(99, 102, 241, 0.25), transparent 55%),
+          #0f172a;
+        min-height: 100vh;
+      }
+      header {
+        padding: 2.5rem 1.5rem 1.5rem;
+        text-align: center;
+      }
+      header h1 {
+        margin: 0 0 0.5rem;
+        font-size: 2.6rem;
+        letter-spacing: 0.02em;
+      }
+      header p {
+        margin: 0;
+        opacity: 0.75;
+      }
+      main {
+  max-width: 100vw;
+  margin: 0;
+  padding: 0 0 3rem 0;
+  display: grid;
+  gap: 1.75rem;
+      }
+      .panel {
+        background: rgba(15, 23, 42, 0.55);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(148, 163, 184, 0.15);
+        border-radius: 18px;
+        padding: 1.75rem;
+        box-shadow: 0 30px 60px rgba(15, 23, 42, 0.45);
+      }
+      section {
+        display: grid;
+        gap: 1.5rem;
+      }
+      h2 {
+        margin-top: 0;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 1.5rem;
+      }
+      .controls,
+      .connection-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        align-items: center;
+      }
+      .connection-container {
+        display: grid;
+        gap: 1rem;
+      }
+      @media (min-width: 900px) {
+        .connection-container {
+          grid-template-columns: minmax(320px, 360px) 1fr;
+          align-items: start;
+        }
+      }
+      button {
+        appearance: none;
+        border: none;
+        padding: 0.9rem 1.8rem;
+        border-radius: 999px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: transform 0.15s ease, box-shadow 0.15s ease;
+        font-size: 1.05rem;
+      }
+      button.primary {
+        background: linear-gradient(135deg, #38bdf8, #6366f1);
+        color: #0f172a;
+        box-shadow: 0 12px 30px rgba(56, 189, 248, 0.35);
+      }
+      button.secondary {
+        background: rgba(148, 163, 184, 0.15);
+        color: #e2e8f0;
+        border: 1px solid rgba(148, 163, 184, 0.2);
+      }
+      button:disabled {
+        opacity: 0.35;
+        cursor: not-allowed;
+        box-shadow: none;
+      }
+      button:not(:disabled):hover {
+        transform: translateY(-1px);
+      }
+      .metrics {
+        display: grid;
+        gap: 1.2rem;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      }
+      .metric-card {
+        background: rgba(148, 163, 184, 0.1);
+        border-radius: 16px;
+        padding: 1.1rem;
+        display: grid;
+        gap: 0.35rem;
+      }
+      .metric-card h3 {
+        margin: 0;
+        font-size: 1rem;
+        opacity: 0.75;
+      }
+      .metric-value {
+        font-size: 2.4rem;
+        font-weight: 700;
+        letter-spacing: -0.02em;
+      }
+      .metric-unit {
+        font-size: 1rem;
+        opacity: 0.65;
+      }
+      .status-strip {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.7rem;
+        margin-top: 1.25rem;
+      }
+      .status-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        padding: 0.55rem 1rem;
+        border-radius: 999px;
+        border: 1px solid rgba(148, 163, 184, 0.25);
+        background: rgba(15, 23, 42, 0.65);
+        font-size: 0.95rem;
+        letter-spacing: 0.01em;
+      }
+      .status-pill.active {
+        background: rgba(56, 189, 248, 0.16);
+        border-color: rgba(56, 189, 248, 0.45);
+        color: #38bdf8;
+        box-shadow: 0 10px 24px rgba(56, 189, 248, 0.25);
+      }
+      .actions-grid {
+        display: grid;
+        gap: 1.2rem;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      }
+      .action-card {
+        border-radius: 18px;
+        padding: 1.2rem;
+        background: rgba(15, 23, 42, 0.55);
+        border: 1px solid rgba(148, 163, 184, 0.15);
+        display: grid;
+        gap: 0.75rem;
+      }
+      .action-card h3 {
+        margin: 0;
+        font-size: 1.1rem;
+      }
+      label {
+        display: block;
+        font-size: 0.9rem;
+        opacity: 0.75;
+        margin-bottom: 0.45rem;
+      }
+      input {
+        width: 100%;
+        padding: 0.85rem 1rem;
+        border-radius: 12px;
+        border: 1px solid rgba(148, 163, 184, 0.25);
+        background: rgba(15, 23, 42, 0.75);
+        color: inherit;
+        font-size: 1.05rem;
+      }
+      input:focus {
+        outline: none;
+        border-color: rgba(56, 189, 248, 0.55);
+        box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.25);
+      }
+      .log-panel {
+        margin-top: 1rem;
+        padding: 1rem;
+        border-radius: 14px;
+        background: rgba(15, 23, 42, 0.55);
+        border: 1px solid rgba(148, 163, 184, 0.15);
+        max-height: 220px;
+        overflow-y: auto;
+        font-size: 0.95rem;
+      }
+      .log-entry {
+        margin: 0 0 0.5rem;
+        opacity: 0.85;
+      }
+      .log-entry strong {
+        color: #38bdf8;
+      }
+      .log-entry.log-success strong {
+        color: #4ade80;
+      }
+      .log-entry.log-error strong {
+        color: #f87171;
+      }
+      .log-entry.log-info strong {
+        color: #38bdf8;
+      }
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        padding: 0.45rem 0.9rem;
+        border-radius: 999px;
+        background: rgba(56, 189, 248, 0.15);
+        color: #38bdf8;
+        font-size: 0.95rem;
+      }
+      @media (max-width: 640px) {
+        header h1 {
+          font-size: 2rem;
+        }
+        .metric-value {
+          font-size: 1.9rem;
+        }
+        button {
+          width: 100%;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>DSE JetBus Meitech</h1>
+      <p>Monitore o stream de Net e Gross via JetBus sem abandonar o Node.js.</p>
+    </header>
+    <main>
+      <section id="connection-section">
+        <div class="panel connection-container">
+          <div>
+            <h2>Conexão</h2>
+            <div class="connection-row">
+              <span id="connection-status" class="badge">Desconectado</span>
+              <button id="connect-btn" class="primary">Conectar</button>
+              <button id="disconnect-btn" class="secondary" disabled>Desconectar</button>
+            </div>
+          </div>
+          <div class="panel" style="padding:1.2rem 1.5rem; align-self: center;">
+            <strong style="display:block; font-size:1rem; opacity:0.75;">Atualizado</strong>
+            <span id="last-update" style="font-size:1.15rem;">—</span>
+          </div>
+        </div>
+      </section>
+
+      <section id="live-data-section">
+        <div class="panel">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap;">
+            <h2>Dados de Processo</h2>
+          </div>
+          <div class="metrics">
+            <div class="metric-card">
+              <h3>Net</h3>
+              <div class="metric-value" id="net-value">--</div>
+              <div class="metric-unit" id="net-printable"></div>
+            </div>
+            <div class="metric-card">
+              <h3>Gross</h3>
+              <div class="metric-value" id="gross-value">--</div>
+              <div class="metric-unit" id="gross-printable"></div>
+            </div>
+            <div class="metric-card">
+              <h3>Tare</h3>
+              <div class="metric-value" id="tare-value">--</div>
+              <div class="metric-unit" id="tare-printable"></div>
+            </div>
+            <div class="metric-card">
+              <h3>Unidade</h3>
+              <div class="metric-value" id="unit-value">--</div>
+              <div class="metric-unit" id="decimals-value"></div>
+            </div>
+          </div>
+          <div class="status-strip" id="status-strip"></div>
+        </div>
+      </section>
+
+      <section>
+        <div class="panel flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+          <div>
+            <h2>Configurações avançadas</h2>
+            <p style="opacity:0.75;max-width:32rem">Gerencie comandos, calibração e leituras detalhadas no painel dedicado. Conexão e fluxo continuam visíveis aqui.</p>
+          </div>
+          <a
+            href="/settings.html"
+            class="px-6 py-2 rounded-full bg-gradient-to-r from-sky-400 to-indigo-500 text-slate-900 font-semibold shadow-brand-lg transition-transform hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-sky-300"
+          >Abrir painel de ações</a>
+        </div>
+      </section>
+    </main>
+    <script type="module" src="/assets/app.js"></script>
+  </body>
+</html>

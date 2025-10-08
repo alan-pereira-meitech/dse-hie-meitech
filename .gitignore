@@ -1,24 +1,9 @@
-#*.suo
-#*.ide
-
-bin/
-obj/
-packages/
-TestResults/
-.axoCover/
-.vs/
-
-# CMake build artifacts
-build/
-cmake-build*/
-
-# Local dependency caches
-_deps/
-
-
-/Examples/NETStandard2TestLib
-Doc/log.log
-Automation-API-Doc/debug.log
-Automation-API-Doc/Help/
-Examples/CommandLine/StyleCop.Cache
-StyleCop.Cache
+npm-debug.log*
+.DS_Store
+node_modules/
+dist/
+public/assets/*
+!public/assets/app.js
+!public/assets/.gitkeep
+npm-debug.log*
+.DS_Store

@@ -1,2 +1,0 @@
-/usr/bin/ar qc libjetbus_core.a CMakeFiles/jetbus_core.dir/src/jetbus/client.cpp.o CMakeFiles/jetbus_core.dir/src/jetbus/commands.cpp.o CMakeFiles/jetbus_core.dir/src/jetbus/process_data.cpp.o
-/usr/bin/ranlib libjetbus_core.a

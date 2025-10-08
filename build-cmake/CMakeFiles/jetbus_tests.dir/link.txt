@@ -1,1 +1,0 @@
-/usr/bin/c++ -O3 -DNDEBUG CMakeFiles/jetbus_tests.dir/tests/measurement_utils_test.cpp.o CMakeFiles/jetbus_tests.dir/tests/process_data_test.cpp.o -o jetbus_tests  libdse_device.a _deps/catch2-build/src/libCatch2Main.a libjetbus_core.a /usr/lib/x86_64-linux-gnu/libboost_system.so.1.74.0 _deps/catch2-build/src/libCatch2.a 
