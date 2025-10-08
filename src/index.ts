@@ -58,6 +58,30 @@ async function start(): Promise<void> {
     res.json({ actions: deviceActions });
   });
 
+  app.get("/api/filters", async (_req, res, next) => {
+    try {
+      const stages = await manager.getFilterConfiguration();
+      res.json({ stages });
+    } catch (error) {
+      next(error);
+    }
+  });
+
+  app.post("/api/filters", async (req, res, next) => {
+    const { stage, mode, cutOffFrequency } = req.body ?? {};
+    if (typeof stage !== "number" || Number.isNaN(stage)) {
+      res.status(400).json({ error: "stage must be a number" });
+      return;
+    }
+    try {
+      await manager.updateFilterStage(stage, { mode, cutOffFrequency });
+      const stages = await manager.getFilterConfiguration();
+      res.json({ stages });
+    } catch (error) {
+      next(error);
+    }
+  });
+
   app.post("/api/connect", async (_req, res, next) => {
     try {
       const state = await manager.connect();

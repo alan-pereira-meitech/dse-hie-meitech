@@ -1,5 +1,5 @@
-import { Device, DeviceOptions } from "../dse/device";
-import { PrintableWeightValues, TareMode, WeightValues } from "../dse/types";
+import { Device, DeviceOptions, FilterStage } from "../dse/device";
+import { FilterType, PrintableWeightValues, TareMode, WeightValues } from "../dse/types";
 import { ProcessData } from "../jetbus/processData";
 import { JetBusError } from "../jetbus/types";
 
@@ -30,6 +30,33 @@ export interface DeviceState {
 }
 
 export type DeviceEventListener = (snapshot: ProcessDataSnapshot) => void;
+
+export type FilterTypeName = "NoFilter" | "FIRCombFilter" | "FIRMovingAverage";
+
+export interface FilterStageState {
+  stage: FilterStage;
+  mode: FilterTypeName;
+  cutOffFrequency: number;
+}
+
+export interface FilterStageUpdateInput {
+  mode?: string;
+  cutOffFrequency?: number | string;
+}
+
+const FILTER_STAGE_VALUES: readonly FilterStage[] = [2, 3, 4, 5];
+
+const FILTER_TYPE_NAME_BY_VALUE: Record<FilterType, FilterTypeName> = {
+  [FilterType.NoFilter]: "NoFilter",
+  [FilterType.FIRCombFilter]: "FIRCombFilter",
+  [FilterType.FIRMovingAverage]: "FIRMovingAverage"
+};
+
+const FILTER_TYPE_VALUE_BY_NAME: Record<FilterTypeName, FilterType> = {
+  NoFilter: FilterType.NoFilter,
+  FIRCombFilter: FilterType.FIRCombFilter,
+  FIRMovingAverage: FilterType.FIRMovingAverage
+};
 
 export class DeviceManager {
   private readonly device: Device;
@@ -170,6 +197,46 @@ export class DeviceManager {
       default:
         throw new JetBusError(`Unknown action: ${action}`);
     }
+  }
+
+  async getFilterConfiguration(): Promise<FilterStageState[]> {
+    await this.requireConnection();
+    const configuration = await this.device.filterStagesConfiguration();
+    return configuration.map((stageConfig) => ({
+      stage: stageConfig.stage,
+      mode: FILTER_TYPE_NAME_BY_VALUE[stageConfig.mode],
+      cutOffFrequency: stageConfig.cutOffFrequency
+    }));
+  }
+
+  async updateFilterStage(stage: number, configuration: FilterStageUpdateInput): Promise<void> {
+    await this.requireConnection();
+    if (!FILTER_STAGE_VALUES.includes(stage as FilterStage)) {
+      throw new JetBusError("stage must be one of 2, 3, 4 or 5");
+    }
+
+    const update: { mode?: FilterType; cutOffFrequency?: number } = {};
+
+    if (configuration.mode !== undefined) {
+      const normalized = String(configuration.mode) as FilterTypeName;
+      const mapped = FILTER_TYPE_VALUE_BY_NAME[normalized];
+      if (mapped === undefined) {
+        throw new JetBusError(`Unsupported filter mode: ${configuration.mode}`);
+      }
+      update.mode = mapped;
+    }
+
+    if (configuration.cutOffFrequency !== undefined) {
+      const numeric = Number(configuration.cutOffFrequency);
+      this.assertNumber(numeric, "cutOffFrequency");
+      update.cutOffFrequency = numeric;
+    }
+
+    if (Object.keys(update).length === 0) {
+      return;
+    }
+
+    await this.device.configureFilterStage(stage as FilterStage, update);
   }
 
   private async requireConnection(): Promise<void> {

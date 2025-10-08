@@ -3,7 +3,7 @@ import { Command, commands } from "../jetbus/commands";
 import { ProcessData } from "../jetbus/processData";
 import { doubleToDigit } from "../jetbus/measurementUtils";
 import { JetBusError } from "../jetbus/types";
-import { TareMode } from "./types";
+import { FilterType, TareMode } from "./types";
 
 const SCALE_COMMAND_CALIBRATE_ZERO = 2053923171;
 const SCALE_COMMAND_CALIBRATE_NOMINAL = 1852596579;
@@ -13,6 +13,36 @@ const SCALE_COMMAND_SET_GROSS = 1936683623;
 const DEFAULT_COMMAND_TIMEOUT = 10_000;
 const PROCESS_DATA_TIMEOUT = 5_000;
 const MVV_TO_D_CONVERSION = 1_000_000;
+
+export type FilterStage = 2 | 3 | 4 | 5;
+
+const FILTER_STAGE_ORDER: readonly FilterStage[] = [2, 3, 4, 5];
+
+const FILTER_STAGE_COMMANDS: Record<FilterStage, Command> = {
+  2: commands.dseFilterModeStage2(),
+  3: commands.dseFilterModeStage3(),
+  4: commands.dseFilterModeStage4(),
+  5: commands.dseFilterModeStage5()
+};
+
+const COMB_FILTER_FREQUENCY_COMMANDS: Record<FilterStage, Command> = {
+  2: commands.dseCombFilterFrequencyStage2(),
+  3: commands.dseCombFilterFrequencyStage3(),
+  4: commands.dseCombFilterFrequencyStage4(),
+  5: commands.dseCombFilterFrequencyStage5()
+};
+
+const MOVING_AVERAGE_FREQUENCY_COMMANDS: Record<FilterStage, Command> = {
+  2: commands.dseMovAvFilterFrequencyStage2(),
+  3: commands.dseMovAvFilterFrequencyStage3(),
+  4: commands.dseMovAvFilterFrequencyStage4(),
+  5: commands.dseMovAvFilterFrequencyStage5()
+};
+
+const FILTER_TYPE_CODES: Record<number, readonly number[]> = {
+  [FilterType.FIRCombFilter]: [13089, 13090, 13091, 13092],
+  [FilterType.FIRMovingAverage]: [13105, 13106, 13107, 13108]
+};
 
 const DEFAULT_FETCH_PATHS = [
   "6002/02",
@@ -31,6 +61,12 @@ const DEFAULT_FETCH_PATHS = [
   "6144/00",
   "6153/00"
 ] as const;
+
+export interface FilterStageConfiguration {
+  stage: FilterStage;
+  mode: FilterType;
+  cutOffFrequency: number;
+}
 
 export interface DeviceOptions {
   clientOptions: JetBusClientOptions;
@@ -241,6 +277,93 @@ export class Device {
     await this.writeInt(commands.dseNominalSignal(), value);
   }
 
+  async filterStage2Mode(): Promise<FilterType> {
+    return this.getFilterStageMode(2);
+  }
+
+  async setFilterStage2Mode(type: FilterType): Promise<void> {
+    await this.setFilterStageMode(2, type);
+  }
+
+  async filterStage3Mode(): Promise<FilterType> {
+    return this.getFilterStageMode(3);
+  }
+
+  async setFilterStage3Mode(type: FilterType): Promise<void> {
+    await this.setFilterStageMode(3, type);
+  }
+
+  async filterStage4Mode(): Promise<FilterType> {
+    return this.getFilterStageMode(4);
+  }
+
+  async setFilterStage4Mode(type: FilterType): Promise<void> {
+    await this.setFilterStageMode(4, type);
+  }
+
+  async filterStage5Mode(): Promise<FilterType> {
+    return this.getFilterStageMode(5);
+  }
+
+  async setFilterStage5Mode(type: FilterType): Promise<void> {
+    await this.setFilterStageMode(5, type);
+  }
+
+  async filterCutOffFrequencyStage2(): Promise<number> {
+    return this.getFilterCutOffFrequency(2);
+  }
+
+  async setFilterCutOffFrequencyStage2(value: number): Promise<void> {
+    await this.setFilterCutOffFrequency(2, value);
+  }
+
+  async filterCutOffFrequencyStage3(): Promise<number> {
+    return this.getFilterCutOffFrequency(3);
+  }
+
+  async setFilterCutOffFrequencyStage3(value: number): Promise<void> {
+    await this.setFilterCutOffFrequency(3, value);
+  }
+
+  async filterCutOffFrequencyStage4(): Promise<number> {
+    return this.getFilterCutOffFrequency(4);
+  }
+
+  async setFilterCutOffFrequencyStage4(value: number): Promise<void> {
+    await this.setFilterCutOffFrequency(4, value);
+  }
+
+  async filterCutOffFrequencyStage5(): Promise<number> {
+    return this.getFilterCutOffFrequency(5);
+  }
+
+  async setFilterCutOffFrequencyStage5(value: number): Promise<void> {
+    await this.setFilterCutOffFrequency(5, value);
+  }
+
+  async filterStagesConfiguration(): Promise<FilterStageConfiguration[]> {
+    const configurations = await Promise.all(
+      FILTER_STAGE_ORDER.map(async (stage) => ({
+        stage,
+        mode: await this.getFilterStageMode(stage),
+        cutOffFrequency: await this.getFilterCutOffFrequency(stage)
+      }))
+    );
+    return configurations;
+  }
+
+  async configureFilterStage(
+    stage: FilterStage,
+    configuration: { mode?: FilterType; cutOffFrequency?: number }
+  ): Promise<void> {
+    if (configuration.mode !== undefined) {
+      await this.setFilterStageMode(stage, configuration.mode);
+    }
+    if (configuration.cutOffFrequency !== undefined) {
+      await this.setFilterCutOffFrequency(stage, configuration.cutOffFrequency);
+    }
+  }
+
   async saveAllParameters(): Promise<void> {
     await this.writeInt(commands.cia461SaveAllParameters(), 0);
   }
@@ -287,6 +410,84 @@ export class Device {
     const capacityD = Math.round((scaleZeroMvv + capacityMvv) * MVV_TO_D_CONVERSION);
     await this.writeInt(commands.ldwZeroValue(), scaleZeroD);
     await this.writeInt(commands.lwtNominalValue(), capacityD);
+  }
+
+  private async getFilterStageMode(stage: FilterStage): Promise<FilterType> {
+    const command = FILTER_STAGE_COMMANDS[stage];
+    const value = await this.readInt(command);
+    return this.normalizeFilterType(value);
+  }
+
+  private async setFilterStageMode(stage: FilterStage, type: FilterType): Promise<void> {
+    const command = FILTER_STAGE_COMMANDS[stage];
+    const currentValue = await this.readInt(command);
+    const currentType = this.normalizeFilterType(currentValue);
+    if (currentType === type) {
+      return;
+    }
+    const valueToWrite = await this.determineFilterCode(stage, type);
+    await this.writeInt(command, valueToWrite);
+  }
+
+  private async determineFilterCode(stage: FilterStage, type: FilterType): Promise<number> {
+    if (type === FilterType.NoFilter) {
+      return 0;
+    }
+    const candidates = FILTER_TYPE_CODES[type];
+    if (!candidates || candidates.length === 0) {
+      return 0;
+    }
+    const values = await Promise.all(
+      FILTER_STAGE_ORDER.map((filterStage) => this.readInt(FILTER_STAGE_COMMANDS[filterStage]))
+    );
+    const stageIndex = FILTER_STAGE_ORDER.indexOf(stage);
+    if (stageIndex >= 0) {
+      values[stageIndex] = 0;
+    }
+    for (const candidate of candidates) {
+      if (!values.includes(candidate)) {
+        return candidate;
+      }
+    }
+    return candidates[0];
+  }
+
+  private async getFilterCutOffFrequency(stage: FilterStage): Promise<number> {
+    const mode = await this.getFilterStageMode(stage);
+    switch (mode) {
+      case FilterType.NoFilter:
+        return 0;
+      case FilterType.FIRCombFilter:
+        return this.readInt(COMB_FILTER_FREQUENCY_COMMANDS[stage]);
+      case FilterType.FIRMovingAverage:
+        return this.readInt(MOVING_AVERAGE_FREQUENCY_COMMANDS[stage]);
+      default:
+        return 0;
+    }
+  }
+
+  private async setFilterCutOffFrequency(stage: FilterStage, frequency: number): Promise<void> {
+    const mode = await this.getFilterStageMode(stage);
+    switch (mode) {
+      case FilterType.FIRCombFilter:
+        await this.writeInt(COMB_FILTER_FREQUENCY_COMMANDS[stage], frequency);
+        break;
+      case FilterType.FIRMovingAverage:
+        await this.writeInt(MOVING_AVERAGE_FREQUENCY_COMMANDS[stage], frequency);
+        break;
+      default:
+        break;
+    }
+  }
+
+  private normalizeFilterType(value: number): FilterType {
+    if (value > 13104) {
+      return FilterType.FIRMovingAverage;
+    }
+    if (value > 13088 && value < 13094) {
+      return FilterType.FIRCombFilter;
+    }
+    return FilterType.NoFilter;
   }
 
   private async ensureValue(command: Command, timeout: number): Promise<string> {

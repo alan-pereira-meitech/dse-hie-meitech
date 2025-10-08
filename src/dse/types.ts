@@ -21,3 +21,9 @@ export interface PrintableWeightValues {
   gross: string;
   tare: string;
 }
+
+export enum FilterType {
+  NoFilter = 0,
+  FIRCombFilter = 13089,
+  FIRMovingAverage = 13105
+}
