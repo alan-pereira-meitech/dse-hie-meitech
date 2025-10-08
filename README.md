@@ -20,6 +20,18 @@ Refatoração do cliente JetBus para TypeScript/Node.js com comunicação WebSoc
 npm install
 ```
 
+## Comandos rápidos
+
+Todos os passos abaixo devem ser executados dentro da raiz do projeto (`dse-hie-meitech`).
+
+| Objetivo | Comando |
+| --- | --- |
+| Rodar em modo desenvolvimento com recarga automática | `npm run dev` |
+| Gerar o build TypeScript | `npm run build` |
+| Iniciar o servidor a partir do build gerado | `npm start` |
+
+Para ambientes automatizados (CI/CD), execute `npm ci` em vez de `npm install` para garantir versões determinísticas.
+
 ## Desenvolvimento
 
 Execute o servidor com `ts-node` (hot reload simples).
